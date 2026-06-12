@@ -1,0 +1,360 @@
+openapi: 3.0.3
+info:
+  title: Manajemen & Indoor Localization API
+  description: API Indoor Localization berbasis RSSI dan Anchor ESP32
+  version: 1.0.0
+
+servers:
+- url: http://localhost:8000/api
+
+tags:
+- name: User
+  description: Manajemen User
+- name: Devices
+  description: Manajemen ESP32 device
+- name: Anchors
+  description: Manajemen anchor
+- name: Localization
+  description: Data RSSI & posisi
+
+paths:
+  /user:
+    get:
+      tags:
+      - User
+      summary: Get User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+      responses:
+        "200":
+          description: Success get User
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+
+        "400":
+          description: gagal
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # /manajemen:
+  #   get:
+  #     tags:
+  #     - Manajemen
+  #     summary: Get barang
+  #     requestBody:
+  #       required: true
+  #       content:
+  #         application/json:
+  #           schema:
+  #             $ref: '#/components/schemas/ManajemenRequest'
+  #     responses:
+  #       "200":
+  #         description: Success get barang
+
+  /devices:
+    get:
+      tags:
+      - Devices
+      summary: Get devices online
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeviceRequest"
+      responses:
+        "200":
+          description: Berhasil ambil device
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+        "400":
+          description: Gagl ambil device
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /devices/register:
+    post:
+      tags:
+      - Devices
+      summary: Registrasi ESP32 device
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeviceRegisterRequest"
+      responses:
+        "201":
+          description: Device berhasil didaftarkan
+        "400":
+          description: Device gagal didaftarkan
+
+  /anchors:
+    get:
+      tags:
+      - Anchors
+      summary: Ambil daftar anchor
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Anchor"
+
+    post:
+      tags:
+      - Anchors
+      summary: Tambah anchor baru
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Anchor"
+      responses:
+        "201":
+          description: Anchor ditambahkan
+
+  /localizations:
+    post:
+      tags:
+      - Localization
+      summary: Kirim data RSSI dari device ke anchor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LocalizationRequest"
+      responses:
+        "200":
+          description: Data RSSI diterima
+
+  /localizations/latest/{device_id}:
+    get:
+      tags:
+      - Localization
+      summary: Ambil posisi terakhir device
+      parameters:
+      - name: device_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Posisi terakhir device
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LocalizationResponse"
+
+components:
+  schemas:
+    SuccessResponse:
+      type: object
+      required:
+      - status_code
+      - message
+      properties:
+        status_code:
+          type: number
+          example: 200
+        message:
+          type: string
+          example: Berhasil
+
+    ErrorResponse:
+      type: object
+      required:
+      - status_code
+      - message
+      properties:
+        status_code:
+          type: number
+          example: 404
+        message:
+          type: string
+          example: Gagal
+
+    UserRequest:
+      type: object
+      required:
+      - username
+      - nim
+      - email
+      - password
+      - role
+      properties:
+        username:
+          type: string
+          example: Lingga
+        nim:
+          type: number
+          example: 43122313
+        email:
+          type: string
+          example: linggaaditya2806@gmail.com
+        password:
+          type: string
+          example: lingga123
+        role:
+          type: string
+          example: mahasiswa
+
+    DeviceRequest:
+      type: object
+      required:
+      - device_id
+      - name
+      - mac_address
+      - type
+      - status
+      - postition
+      - x
+      - y
+      properties:
+        device_id:
+          type: string
+          example: esp32-001
+        name:
+          type: string
+          example: Osiloksop 1
+        mac_address:
+          type: string
+          example: 24:6F:28:AA:BB:CC
+        type:
+          type: string
+          example: Beacon
+        status:
+          type: string
+          example: Online
+        postition:
+          type: array
+          items:
+            type: object
+            required:
+            - x
+            - y
+            properties:
+              x:
+                type: number
+                example: 212
+              y:
+                type: number
+                example: 332
+
+    DeviceRegisterRequest:
+      type: object
+      required:
+      - device_id
+      - name
+      - mac_address
+      - type
+
+      properties:
+        device_id:
+          type: string
+          example: esp32-001
+        name:
+          type: string
+          example: Osiloksop 1
+        mac_address:
+          type: string
+          example: 24:6F:28:AA:BB:CC
+        type:
+          type: string
+          example: Beacon
+
+    Anchor:
+      type: object
+      required:
+      - anchor_id
+      - x
+      - y
+      properties:
+        anchor_id:
+          type: string
+          example: anchor-01
+        mac_address:
+          type: string
+          example: 24:6F:28:DD:EE:FF
+        x:
+          type: number
+          format: float
+          example: 0.0
+        y:
+          type: number
+          format: float
+          example: 0.0
+        room:
+          type: string
+          example: Lab IoT
+
+    LocalizationRequest:
+      type: object
+      required:
+      - device_id
+      - anchors
+      properties:
+        device_id:
+          type: string
+          example: esp32-001
+        anchors:
+          type: array
+          items:
+            type: object
+            required:
+            - anchor_id
+            - rssi
+            properties:
+              anchor_id:
+                type: string
+                example: anchor-01
+              rssi:
+                type: integer
+                example: -65
+        timestamp:
+          type: string
+          format: date-time
+          example: "2026-01-05T10:30:00Z"
+
+    LocalizationResponse:
+      type: object
+      properties:
+        device_id:
+          type: string
+          example: esp32-001
+        position:
+          type: object
+          properties:
+            x:
+              type: number
+              format: float
+              example: 3.4
+            y:
+              type: number
+              format: float
+              example: 1.8
+        room:
+          type: string
+          example: Lab IoT
+        timestamp:
+          type: string
+          format: date-time

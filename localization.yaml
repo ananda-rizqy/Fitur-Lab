@@ -1,0 +1,69 @@
+openapi: 3.0.0
+info:
+  title: Library API
+  version: 1.0.0
+
+paths:
+  /books/{bookId}:
+    get:
+      summary: Ambil detail buku
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "B-99"
+      responses:
+        "200":
+          description: Data buku ditemukan
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookDetail"
+        "404":
+          description: Buku tidak ada di database
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+  schemas:
+    # Skema untuk Response Sukses
+    BookDetail:
+      type: object
+      required: [id, title, author] # Field yang wajib ada
+      properties:
+        id:
+          type: string
+          example: "B-99"
+        title:
+          type: string
+          example: "Belajar PHP Mastery"
+        author:
+          type: string
+          example: "Loka Dwi"
+        is_available:
+          type: boolean
+          example: true
+        published_at:
+          type: string
+          format: date
+          example: "2023-12-01"
+        categories:
+          type: array
+          items:
+            type: string
+          example: ["Programming", "Web Development"]
+
+    # Skema untuk Response Error
+    ErrorResponse:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 404
+        message:
+          type: string
+          example: "Buku dengan ID tersebut tidak ditemukan."
