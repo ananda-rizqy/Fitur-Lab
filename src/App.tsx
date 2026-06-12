@@ -29,6 +29,7 @@ import PengembalianAlatPage from "./pages/Mahasiswa/Pengembalian/PengembalianAla
 import { PemantauanRuangPage } from "./pages/Dosen/PemantauanRuang/PemantauanRuangPage";
 import { PemantauanAlatPage } from "./pages/Dosen/PemantauanAlat/PemantauanAlatPage";
 import { ClassPage } from "./pages/ClassPage/ClassPage";
+import { LaporanAsetPage } from "./pages/Laporan/LaporanAsetPage";
 
 function App() {
   return (
@@ -101,6 +102,7 @@ function App() {
           {/* Rute Dosen */}
           <Route path="/riwayat-ruang" element={<PemantauanRuangPage />} />
           <Route path="/riwayat-alat" element={<PemantauanAlatPage />} />
+          <Route path="/laporan-aset" element={<LaporanAsetPage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

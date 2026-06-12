@@ -71,6 +71,12 @@ const items = [
     roles: ["tendik", "mahasiswa", "dosen"],
   },
   {
+    title: "Laporan Penggunaan Aset",
+    url: "/laporan-aset",
+    icon: IconCalendarTime,
+    roles: ["tendik", "dosen"],
+  },
+  {
     title: "Persetujuan Pinjam",
     url: "/persetujuan-pinjam",
     icon: IconFileCheck,
