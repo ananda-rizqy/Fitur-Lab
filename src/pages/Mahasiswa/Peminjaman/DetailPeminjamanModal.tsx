@@ -14,7 +14,7 @@ interface ModalProps {
   onClose: () => void;
   data: any;
 }
-
+ 
 export default function DetailPeminjamanModal({
   isOpen,
   onClose,
