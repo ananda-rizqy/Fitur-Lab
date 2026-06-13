@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import {
   useReactTable,
   getCoreRowModel,
-  getPaginationRowModel,
+  getPaginationRowModel, 
   getFilteredRowModel,
   getSortedRowModel,
   flexRender,
