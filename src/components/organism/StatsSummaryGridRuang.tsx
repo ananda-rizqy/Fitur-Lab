@@ -1,6 +1,6 @@
 import { Card } from "../ui/card";
 import { Layers, CheckCircle2, ThumbsUp, AlertTriangle } from "lucide-react";
-
+ 
 interface StatsProps {
   stats: {
     total: number;
