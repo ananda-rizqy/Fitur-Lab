@@ -8,7 +8,7 @@ interface InventoryStatsProps {
     rusak: number;
     volume: number;
   };
-}
+} 
 
 export function InventorySummaryGrid({ stats }: InventoryStatsProps) {
   return (
