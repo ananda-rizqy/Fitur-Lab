@@ -6,7 +6,7 @@ import {
   Loader2,
   Camera,
   Calendar,
-  Hash,
+  Hash, 
   ArrowRight,
   Quote,
 } from "lucide-react";
