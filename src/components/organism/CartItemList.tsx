@@ -41,7 +41,7 @@ export function CartItemList({
         ) : (
           <CartNonAssetRow
             key={item.id}
-            item={item as any} // Cast as any demi kelancaran compiler sub-komponen
+            item={item as any} 
             onRemove={() => onRemove(item.id)}
             onUpdateQty={(newQty) => onUpdateQty(item.id, newQty)}
           />
@@ -49,4 +49,4 @@ export function CartItemList({
       })}
     </div>
   );
-}
+} 
