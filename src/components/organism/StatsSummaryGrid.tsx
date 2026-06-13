@@ -9,7 +9,7 @@ interface StatsProps {
     rusak: number;
   };
 }
-
+ 
 export function StatsSummaryGrid({ stats }: StatsProps) {
   return (
     // Menggunakan 4 kolom di layar besar agar layout pas dan padat
