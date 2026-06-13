@@ -143,4 +143,4 @@ export function InventoryTable({
       </div>
     </div>
   );
-}
+} 
