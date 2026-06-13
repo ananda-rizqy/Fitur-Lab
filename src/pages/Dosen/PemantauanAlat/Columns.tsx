@@ -3,7 +3,6 @@ import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
 import { ArrowUpDown, Wrench, User as UserIcon } from "lucide-react";
 
-// Helper untuk memastikan URL foto tidak double
 const getImageUrl = (path: string) => {
   if (!path) return "";
   return path.startsWith("http") ? path : `https://api.tugasakhirr.com/storage/${path}`;
