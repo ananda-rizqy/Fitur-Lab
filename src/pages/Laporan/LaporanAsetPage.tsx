@@ -4,7 +4,6 @@ import { PageLayout } from "../../layouts/PageLayout";
 import { LoanFilterCard } from "../../components/molecules/LoanFilterCard";
 
 export const LaporanAsetPage = () => {
-  // State untuk filter
   const [searchQuery, setSearchQuery] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
