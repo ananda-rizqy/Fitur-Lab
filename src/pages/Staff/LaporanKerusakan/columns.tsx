@@ -2,7 +2,7 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { Button } from "../../../components/ui/button";
 import {
   ArrowUpDown,
-  MessageSquare,
+  MessageSquare, 
   Image as ImageIcon,
   Clock,
   User as UserIcon,
