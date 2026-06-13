@@ -23,7 +23,6 @@ export function LaporanAset({ searchQuery = "", startDate = "", endDate = "" }: 
   try {
     setLoading(true);
     
-    // Kirim tanggal sebagai parameter query
     const res = await api.get("/laporan/penggunaan-aset", {
       params: { 
         start_date: startDate, 
