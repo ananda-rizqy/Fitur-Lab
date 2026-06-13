@@ -10,7 +10,7 @@ export interface AlatFormData {
   jumlah: number | "";
   kondisi: string;
 }
-
+ 
 interface AlatFormProps {
   initialData?: AlatFormData;
   onSuccess: () => void;
