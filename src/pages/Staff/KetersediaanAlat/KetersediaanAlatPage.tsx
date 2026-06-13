@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import {
   useReactTable,
   getCoreRowModel,
-  getSortedRowModel,
+  getSortedRowModel, 
   getPaginationRowModel,
   getFilteredRowModel,
   type SortingState,
