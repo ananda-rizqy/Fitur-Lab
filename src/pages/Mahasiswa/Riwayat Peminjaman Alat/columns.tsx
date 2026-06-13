@@ -2,7 +2,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
 import { ArrowUpDown, MessageSquare, ImageIcon } from "lucide-react";
-
+ 
 export const getColumns = (
   setSelectedImg: (url: string) => void,
 ): ColumnDef<any>[] => [
