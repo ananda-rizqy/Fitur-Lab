@@ -11,7 +11,7 @@ import { Button } from "../../../components/ui/button";
 import api from "../../../services/api";
 import { Loader2, ClipboardX, Camera, X } from "lucide-react";
 import Swal from "sweetalert2";
-
+ 
 type StatusTab = "ALL" | "PENDING" | "APPROVED" | "ONGOING" | "SELESAI" | "DITOLAK";
 const TABS_LIST: StatusTab[] = ["ALL", "PENDING", "APPROVED", "ONGOING", "SELESAI", "DITOLAK"];
 
