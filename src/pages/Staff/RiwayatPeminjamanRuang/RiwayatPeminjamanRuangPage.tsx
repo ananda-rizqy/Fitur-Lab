@@ -183,4 +183,4 @@ export function RiwayatPeminjamanRuangPage() {
       </div>
     </PageLayout>
   );
-}
+} 
