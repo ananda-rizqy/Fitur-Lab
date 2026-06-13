@@ -6,7 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-
+ 
 interface ToolbarSearchProps {
   globalFilter: string;
   setGlobalFilter: (value: string) => void;
