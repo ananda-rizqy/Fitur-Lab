@@ -5,7 +5,7 @@ export const getColumns = (
   isStaff: boolean,
   onEdit: (data: any) => void,
   onDelete: (id: number) => void,
-): ColumnDef<any>[] => [
+): ColumnDef<any>[] => [ 
   {
     header: "NO",
     cell: (info) => (
