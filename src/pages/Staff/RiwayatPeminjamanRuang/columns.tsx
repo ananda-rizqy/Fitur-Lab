@@ -7,7 +7,7 @@ import {
   Image as ImageIcon,
   Clock,
   User as UserIcon,
-  Circle,
+  Circle, 
 } from "lucide-react";
 
 export const getColumns = (
