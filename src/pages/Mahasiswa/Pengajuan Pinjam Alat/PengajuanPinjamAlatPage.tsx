@@ -141,9 +141,7 @@ export default function PengajuanPinjamAlatPage() {
     }
   }, []);
 
-  // =========================================================================
-  // 🌟 FIX UTAMA: Suntik langsung kode_tag murni sebagai array selected_tags!
-  // =========================================================================
+
   const addToCart = (alat: Alat) => {
     if (cart.find((i) => i.id === alat.id)) return;
     
