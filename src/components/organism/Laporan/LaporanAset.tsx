@@ -78,8 +78,8 @@ useEffect(() => {
 
   return (
     <div className="w-full space-y-4">
-      <div className="w-full border-2 border-zinc-950 bg-white shadow-[4px_4px_0px_0px_rgba(9,9,11,1)]">
-        <table className="w-full text-left border-collapse font-mono text-xs">
+      <div className="w-full overflow-x-auto border-2 border-zinc-950 bg-white shadow-[4px_4px_0px_0px_rgba(9,9,11,1)]">
+        <table className="w-full min-w-[500px] text-left border-collapse font-mono text-x">
           <thead className="bg-zinc-950 text-white">
             <tr>
               <th className="p-4 border-r border-zinc-700 uppercase tracking-wider">Nama Alat</th>

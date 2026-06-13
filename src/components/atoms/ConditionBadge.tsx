@@ -29,4 +29,4 @@ export const ConditionBadge = ({
       {currentCondition}
     </Badge>
   );
-};
+}; 

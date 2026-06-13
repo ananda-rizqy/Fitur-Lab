@@ -98,7 +98,10 @@ export default function PeminjamanPage() {
       {showCamera !== null && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4">
           <div className="bg-white p-4 w-full max-w-sm rounded-xl">
-            <Webcam ref={webcamRef} screenshotFormat="image/jpeg" className="w-full rounded-lg" />
+            <Webcam ref={webcamRef} screenshotFormat="image/jpeg" className="w-full rounded-lg" 
+            videoConstraints={{
+            facingMode: { exact: "environment" } // Memaksa kamera belakang
+          }}/>
             <div className="flex gap-2 mt-4">
               <Button onClick={captureAndUpload} className="flex-1"><Camera className="mr-2" size={16}/> Ambil & Kirim</Button>
               <Button variant="outline" onClick={() => setShowCamera(null)}><X size={16}/></Button>
