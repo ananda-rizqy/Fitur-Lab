@@ -14,7 +14,7 @@ import GuestRoute from "./routes/GuestRoute";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import { NotFoundPage } from "./pages/NotFoundPage/NotFoundPage";
 import { ProtectedNotFoundPage } from "./routes/ProtectedNotFoundPage";
-
+ 
 import { RiwayatPeminjamanAlat } from "./pages/Staff/RiwayatPeminjamanAlat/RiwayatPeminjamanAlat";
 import { RiwayatPeminjamanRuangPage } from "./pages/Staff/RiwayatPeminjamanRuang/RiwayatPeminjamanRuangPage";
 import { LaporanKerusakanPage } from "./pages/Staff/LaporanKerusakan/LaporanKerusakanPage";
