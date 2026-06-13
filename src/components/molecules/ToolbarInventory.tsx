@@ -131,4 +131,4 @@ export function ToolbarInventory({
 
     </div>
   );
-}
+} 
