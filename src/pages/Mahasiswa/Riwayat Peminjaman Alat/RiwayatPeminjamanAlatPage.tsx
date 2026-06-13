@@ -4,7 +4,7 @@ import {
   getCoreRowModel,
   getPaginationRowModel,
   getFilteredRowModel,
-  getSortedRowModel,
+  getSortedRowModel, 
 } from "@tanstack/react-table";
 import type { SortingState } from "@tanstack/react-table";
 
