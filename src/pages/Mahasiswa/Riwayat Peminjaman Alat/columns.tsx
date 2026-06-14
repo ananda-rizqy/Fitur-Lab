@@ -1,7 +1,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
-import { ArrowUpDown, MessageSquare, ImageIcon } from "lucide-react";
+import { ArrowUpDown, MessageSquare, ImageIcon, MapPin} from "lucide-react";
  
 export const getColumns = (
   setSelectedImg: (url: string) => void,
@@ -17,7 +17,7 @@ export const getColumns = (
   },
   {
     accessorKey: "details",
-    header: "Informasi Alat",
+    header: "Informasi Alat & Ruangan",
     cell: ({ row }) => {
       const details = row.original.details || [];
       return (
@@ -31,8 +31,12 @@ export const getColumns = (
             ))}
           </div>
           <div className="flex items-center gap-1 text-[10px] font-mono border-2 border-zinc-900 p-1.5 bg-zinc-50 shadow-[2px_2px_0px_0px_rgba(9,9,11,1)]">
-            <MessageSquare size={10} />
+            <MessageSquare size={10} className="shrink-0" />
             <span>{row.original.tujuan_penggunaan}</span>
+          </div>
+          <div className="flex items-center gap-1 text-[10px] font-mono border-2 border-zinc-900 p-1.5 bg-zinc-50 shadow-[2px_2px_0px_0px_rgba(9,9,11,1)]">
+            <MapPin size={10} className="shrink-0" />
+            <span>{row.original.ruangan_lab || "Tidak Ditentukan"}</span>
           </div>
         </div>
       );
