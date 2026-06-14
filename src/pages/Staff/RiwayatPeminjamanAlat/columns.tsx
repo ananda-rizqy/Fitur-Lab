@@ -37,7 +37,7 @@ export const getColumns = (
       <div className="flex items-center gap-3 py-1 text-left">
         <div className="h-8 w-8 rounded-none bg-zinc-50 dark:bg-zinc-900 flex items-center justify-center text-zinc-900 dark:text-white border-2 border-zinc-950 dark:border-zinc-800 shadow-[2px_2px_0px_0px_rgba(9,9,11,1)] shrink-0">
           <UserIcon size={13} />
-        </div>
+        </div>   
         <div>
           <div className="font-mono font-black text-zinc-900 dark:text-zinc-100 text-xs tracking-tight">
             {row.original.nama_mahasiswa || "N/A"}
