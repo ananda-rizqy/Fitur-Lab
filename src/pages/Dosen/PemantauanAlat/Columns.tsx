@@ -20,7 +20,7 @@ export const getColumns = (setSelectedImg: (url: string) => void): ColumnDef<any
   },
   {
     accessorKey: "nama_mahasiswa",
-    header: "Peminjam",
+    header: "Peminjam & Ruangan",
     cell: ({ row }) => (
       <div className="flex items-center gap-3 py-1">
         <div className="h-8 w-8 rounded-none bg-zinc-50 flex items-center justify-center border-2 border-zinc-950 shadow-[2px_2px_0px_0px_rgba(9,9,11,1)]">
@@ -29,22 +29,39 @@ export const getColumns = (setSelectedImg: (url: string) => void): ColumnDef<any
         <div className="text-left">
           <div className="font-mono font-black text-xs">{row.original.nama_mahasiswa || "N/A"}</div>
           <div className="text-[10px] text-zinc-400 font-bold">NIM: {row.original.nim_mahasiswa || "-"}</div>
-          <div className="text-[10px] text-zinc-500 italic">Tujuan: {row.original.tujuan_penggunaan}</div>
+            <div className="text-[10px] text-zinc-400 font-bold">KELAS: {row.original.kelas_mahasiswa || "N/A"}</div>
+            <div className="text-[10px] font-mono text-emerald-700 dark:text-emerald-500 font-black tracking-wide mt-1 bg-emerald-50 px-1 w-fit border border-emerald-200">
+              {row.original.ruangan_lab || "NO LAB"} </div>
         </div>
       </div>
     ),
   },
   {
     accessorKey: "details",
-    header: "Detail Alat & Kode Tag",
+    header: "Detail Alat & Tujuan",
     cell: ({ row }) => (
-      <div className="space-y-1 py-1 text-left">
-        {row.original.details?.map((d: any, i: number) => (
-          <div key={i} className="bg-white border-2 border-zinc-950 rounded-none px-2 py-1 text-[10px] font-sans">
-            <div className="font-black"><Wrench size={10} className="inline mr-1" /> {d.alat?.nama_alat || "Alat"} ({d.jumlah_pinjam})</div>
-            <div className="text-zinc-500 italic">Tag: {d.alat?.kode_tag || "-"}</div>
+      <div className="space-y-2 py-1 text-left">
+        {/* Bagian Daftar Alat (Perulangan) */}
+        <div className="space-y-1">
+          {row.original.details?.map((d: any, i: number) => (
+            <div key={i} className="bg-white border-2 border-zinc-950 rounded-none px-2 py-1 text-[10px] font-sans">
+              <div className="font-black">
+                <Wrench size={10} className="inline mr-1" /> 
+                {d.alat?.nama_alat || "Alat"} ({d.jumlah_pinjam})
+              </div>
+              <div className="text-zinc-500 italic">
+                Tag: {d.alat?.kode_tag || "-"}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Bagian Tujuan Penggunaan (Hanya muncul 1x di luar loop) */}
+        {row.original.tujuan_penggunaan && (
+          <div className="text-[10px] bg-zinc-100 p-1.5 border-l-2 border-zinc-950 italic text-zinc-600 font-mono">
+            <strong>Tujuan:</strong> {row.original.tujuan_penggunaan}
           </div>
-        ))}
+        )}
       </div>
     ),
   },

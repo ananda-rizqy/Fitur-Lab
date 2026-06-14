@@ -32,7 +32,7 @@ export const getColumns = (
   },
   {
     accessorKey: "nama_mahasiswa",
-    header: "Peminjam",
+    header: "Peminjam & Ruangan",
     cell: ({ row }) => (
       <div className="flex items-center gap-3 py-1 text-left">
         <div className="h-8 w-8 rounded-none bg-zinc-50 dark:bg-zinc-900 flex items-center justify-center text-zinc-900 dark:text-white border-2 border-zinc-950 dark:border-zinc-800 shadow-[2px_2px_0px_0px_rgba(9,9,11,1)] shrink-0">
@@ -47,6 +47,9 @@ export const getColumns = (
           </div>
           <div className="text-[10px] font-mono text-zinc-400 dark:text-zinc-500 font-bold tracking-wide mt-0.5">
             KELAS: {row.original.kelas_mahasiswa || "N/A"}
+          <div className="text-[10px] font-mono text-emerald-700 dark:text-emerald-500 font-black tracking-wide mt-1 bg-emerald-50 px-1 w-fit border border-emerald-200">
+            {row.original.ruangan_lab || "Tidak ada lab"}
+          </div>
           </div>
         </div>
       </div>
