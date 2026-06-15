@@ -43,7 +43,6 @@ interface CheckoutFormStepProps {
   onRefreshCaptcha: () => void;
   rooms: string[];
 }
-
 const videoConstraints = {
   facingMode: {
     ideal: "environment",
@@ -70,6 +69,9 @@ export function CheckoutFormStep({
   onRefreshCaptcha,
   rooms,
 }: CheckoutFormStepProps) {
+
+  const isBookingMode = startTime !== "" && endTime !== "";
+
   return (
     <ScrollArea className="h-[70vh] w-full pr-3 text-left">
       <div className="space-y-5 pb-4 pl-0.5">
@@ -154,10 +156,20 @@ export function CheckoutFormStep({
             <span>Foto Kondisi Fisik Alat (Before):</span>
           </Label>
           {!showCamera ? (
-            <div
-              onClick={() => setShowCamera(true)}
-              className="w-full h-40 bg-zinc-50 dark:bg-zinc-950 border-2 border-dashed border-zinc-300 dark:border-zinc-800 flex flex-col items-center justify-center cursor-pointer hover:border-zinc-950 dark:hover:border-zinc-500 transition-all overflow-hidden group rounded-none"
-            >
+          <div
+            // Tambahkan pengecekan di sini
+            onClick={() => {
+              if (!isBookingMode) {
+                setShowCamera(true);
+              } else {
+                alert("Kamera tidak dapat diakses saat mode Penjadwalan/Booking.");
+              }
+            }}
+            // Berikan visual disabled (grayscale/opacity)
+            className={`w-full h-40 bg-zinc-50 dark:bg-zinc-950 border-2 border-dashed ${
+              isBookingMode ? "border-zinc-200 cursor-not-allowed opacity-50" : "border-zinc-300 cursor-pointer"
+            } flex flex-col items-center justify-center transition-all group rounded-none`}
+          >
               {imagePreview ? (
                 <div className="w-full h-full relative">
                   <img
@@ -199,6 +211,7 @@ export function CheckoutFormStep({
                   variant="brutal"
                   color="red"
                   size="sm"
+                  disabled={isBookingMode}
                   onClick={() => setShowCamera(false)}
                   className="rounded-none h-9 w-9 px-0 flex items-center justify-center shadow-none"
                 >
