@@ -5,7 +5,6 @@ import api from "../../../services/api";
 import { Card } from "../../ui/card";
 import Swal from "sweetalert2";
 
-// 1. Definisikan interface untuk menerima props dari LoginPage
 interface FormLoginProps {
   captchaInput: string;
   setCaptchaInput: React.Dispatch<React.SetStateAction<string>>;
