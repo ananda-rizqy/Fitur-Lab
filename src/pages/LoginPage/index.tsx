@@ -23,58 +23,57 @@ export function LoginPage() {
   }, [generateCaptcha]);
 
   return (
-  <div className="flex items-center justify-center min-h-screen w-full overflow-hidden p-4">
-    <AuthLayout
-      titleCard="Login to your account"
-      descriptionContent="Enter your credentials below to login to your account"
-    >
-      <div className="flex flex-col gap-6">
+    <div className="flex items-center justify-center min-h-screen w-full overflow-hidden p-4">
+      <AuthLayout
+        titleCard="Login to your account"
+        descriptionContent="Enter your credentials below to login to your account"
+      >
+        <div className="flex flex-col gap-6">
 
-        <FormLogin
-          captchaInput={captchaInput}
-          setCaptchaInput={setCaptchaInput}
-          captchaString={captchaString}
-        />
+          <FormLogin
+            captchaInput={captchaInput}
+            setCaptchaInput={setCaptchaInput}
+            captchaString={captchaString}
+          />
 
-        <div className="flex flex-col gap-2">
-          <label className="text-[10px] font-black uppercase text-zinc-500">
-            Verifikasi Keamanan
-          </label>
+          <div className="flex flex-col gap-2">
+            <label className="text-[10px] font-black uppercase text-zinc-500">
+              Verifikasi Keamanan
+            </label>
 
-          <div className="flex items-center gap-2">
-            <div className="bg-zinc-100 border-2 border-zinc-950 px-6 py-2 font-mono font-black tracking-[0.3em] select-none text-xl w-full text-center">
-              {captchaString}
+            <div className="flex items-center gap-2">
+              <div className="bg-zinc-100 border-2 border-zinc-950 px-6 py-2 font-mono font-black tracking-[0.3em] select-none text-xl w-full text-center">
+                {captchaString}
+              </div>
+
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                onClick={generateCaptcha}
+              >
+                <RefreshCw size={16} />
+              </Button>
             </div>
 
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              onClick={generateCaptcha}
-            >
-              <RefreshCw size={16} />
-            </Button>
+            <input
+              type="text"
+              placeholder="MASUKKAN KODE DI ATAS"
+              className="w-full border-2 border-zinc-950 p-2 font-mono text-sm uppercase"
+              value={captchaInput}
+              onChange={(e) => setCaptchaInput(e.target.value)}
+            />
           </div>
-
-          <input
-            type="text"
-            placeholder="MASUKKAN KODE DI ATAS"
-            className="w-full border-2 border-zinc-950 p-2 font-mono text-sm uppercase"
-            value={captchaInput}
-            onChange={(e) => setCaptchaInput(e.target.value)}
-          />
+          <Button
+              type="submit"
+              form="loginForm"
+              variant="brutal"
+              className="w-full py-6 bg-blue-700 text-white"
+            >
+              Masuk Sekarang
+          </Button>
         </div>
-        <Button
-  type="submit"
-  form="loginForm"
-  variant="brutal"
-  className="w-full py-6 bg-blue-700 text-white"
->
-  Masuk Sekarang
-</Button>
-
-      </div>
-    </AuthLayout>
-  </div>
-);
+      </AuthLayout>
+    </div>
+  );
 }
