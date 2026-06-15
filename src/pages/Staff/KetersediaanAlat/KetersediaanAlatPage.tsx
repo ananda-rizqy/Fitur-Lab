@@ -27,6 +27,7 @@ export function KetersediaanAlatPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editData, setEditData] = useState(null);
   const [globalFilter, setGlobalFilter] = useState("");
+  const [dateFilter, setDateFilter] = useState<string>("");
   const [conditionFilter, setConditionFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -268,6 +269,8 @@ export function KetersediaanAlatPage() {
           setConditionFilter={setConditionFilter}
           statusFilter={statusFilter}         
           setStatusFilter={setStatusFilter}   
+          dateFilter={dateFilter}
+          setDateFilter={setDateFilter}
           pageSize={table.getState().pagination.pageSize}
           setPageSize={(size) => table.setPageSize(size)}
           onRefresh={fetchData}

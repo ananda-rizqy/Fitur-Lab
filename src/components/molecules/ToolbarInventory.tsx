@@ -8,6 +8,8 @@ interface ToolbarInventoryProps {
   setConditionFilter: (v: string) => void;
   statusFilter: string;        
   setStatusFilter: (v: string) => void; 
+  dateFilter: string;
+  setDateFilter: (value: string) => void;
   pageSize: number;
   setPageSize: (size: number) => void;
   onRefresh: () => void;
@@ -15,18 +17,20 @@ interface ToolbarInventoryProps {
   rooms: string[];
 }
 
-export function ToolbarInventory({
-  globalFilter,
-  setGlobalFilter,
-  conditionFilter,
-  setConditionFilter,
-  statusFilter,        
-  setStatusFilter,     
-  pageSize,
-  setPageSize,
-  onRefresh,
-  loading,
-  rooms = [],
+export function ToolbarInventory({ 
+  globalFilter, 
+  setGlobalFilter, 
+  conditionFilter, 
+  setConditionFilter, 
+  statusFilter, 
+  setStatusFilter,
+  dateFilter,    
+  setDateFilter, 
+  pageSize, 
+  setPageSize, 
+  onRefresh, 
+  loading, 
+  rooms 
 }: ToolbarInventoryProps) {
   return (
     /* CONTAINER TOOLBAR: TEMA RETRO NEO-BRUTALISME */
