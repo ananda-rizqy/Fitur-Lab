@@ -42,34 +42,28 @@ export function RiwayatPenggunaanRuangPage() {
   return data.filter((item) => {
     if (!item.waktu_masuk) return true;
 
-    // 1. Parser yang lebih presisi
+    // 1. Parser khusus untuk format "15/06/2026 14:08"
     const parseDate = (dateStr: string) => {
       try {
-        // Contoh input: "15 Jun 2026, 14:07"
-        // Ambil bagian tanggal: "15 Jun 2026"
-        const datePart = dateStr.split(",")[0].trim(); 
-        const [day, monthName, year] = datePart.split(" ");
+        // Ambil bagian tanggal: "15/06/2026"
+        const datePart = dateStr.split(" ")[0]; 
+        const [day, month, year] = datePart.split("/");
         
-        const monthMap: any = { 
-          "Jan": "01", "Feb": "02", "Mar": "03", "Apr": "04", "May": "05", "Jun": "06", 
-          "Jul": "07", "Aug": "08", "Sep": "09", "Oct": "10", "Nov": "11", "Dec": "12" 
-        };
-        
-        const month = monthMap[monthName] || "01";
-        // Hasil akhir: YYYY-MM-DD
-        return `${year}-${month}-${day.padStart(2, '0')}`;
+        // Buat format standar ISO YYYY-MM-DD
+        return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
       } catch (e) {
         return null;
       }
     };
 
     const itemDate = parseDate(item.waktu_masuk);
+    
+    // Debugging (cek di Console browser)
+    console.log("Data Date:", itemDate, "| Filter:", startDate, "s/d", endDate);
+
     if (!itemDate) return true;
 
-    // 2. Debugging: Buka console browser untuk memastikan format cocok
-    // console.log("Data Date:", itemDate, "Filter:", startDate, "to", endDate);
-
-    // 3. Logika Filter yang benar
+    // 2. Logika Perbandingan
     const isAfterStart = startDate ? itemDate >= startDate : true;
     const isBeforeEnd = endDate ? itemDate <= endDate : true;
     
