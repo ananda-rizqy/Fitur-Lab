@@ -3,7 +3,7 @@ import { AuthLayout } from "../../layouts/AuthForm";
 import { FormLogin } from "../../components/organism/FormLogin";
 import { Button } from "../../components/ui/button";
 import { RefreshCw } from "lucide-react";
-
+ 
 export function LoginPage() {
   const [captchaString, setCaptchaString] = useState("");
   const [captchaInput, setCaptchaInput] = useState("");
