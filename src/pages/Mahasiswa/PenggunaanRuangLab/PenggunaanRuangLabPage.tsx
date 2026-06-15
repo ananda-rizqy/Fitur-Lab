@@ -121,7 +121,6 @@ export function PenggunaanRuangLabPage() {
                   ref={webcamRef} 
                   screenshotFormat="image/jpeg" 
                   videoConstraints={{ 
-                    // Menggunakan string biasa, bukan objek { exact: ... }
                     facingMode: "environment" 
                   }}
                   className="w-full max-w-lg"
