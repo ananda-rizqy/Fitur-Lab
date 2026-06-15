@@ -372,8 +372,6 @@ export function PersetujuanPinjamPage() {
                 <div className="font-sans font-black text-zinc-800 dark:text-zinc-200 text-xs">
                   {item.ruangan_lab}
                 </div>
-  
-                {/* 1. Menampilkan Jenis Peminjaman */}
                 <div className="text-[10px] font-mono font-bold text-zinc-500 uppercase mt-1">
                   Tipe Peminjaman: {item.jenis_peminjaman || "-"}
                 </div>
