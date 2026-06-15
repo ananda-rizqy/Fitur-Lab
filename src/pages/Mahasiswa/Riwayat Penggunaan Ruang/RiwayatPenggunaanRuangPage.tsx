@@ -18,7 +18,7 @@ export function RiwayatPenggunaanRuangPage() {
   const [selectedImg, setSelectedImg] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [startDate, setStartDate] = useState<string>("");
-  const [endDate, setEndingDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
   
   const itemsPerPage = 5;
 
@@ -41,20 +41,39 @@ export function RiwayatPenggunaanRuangPage() {
   const filteredData = useMemo(() => {
   return data.filter((item) => {
     if (!item.waktu_masuk) return true;
+
+    // 1. Parser yang lebih presisi
     const parseDate = (dateStr: string) => {
-        const parts = dateStr.split(",")[0].trim().split(" ");
-        const day = parts[0];
-        const monthMap: any = { "Jan": "01", "Feb": "02", "Mar": "03", "Apr": "04", "May": "05", "Jun": "06", "Jul": "07", "Aug": "08", "Sep": "09", "Oct": "10", "Nov": "11", "Dec": "12" };
-        const month = monthMap[parts[1]];
-        const year = parts[2];
-        return `${year}-${month}-${day}`;
+      try {
+        // Contoh input: "15 Jun 2026, 14:07"
+        // Ambil bagian tanggal: "15 Jun 2026"
+        const datePart = dateStr.split(",")[0].trim(); 
+        const [day, monthName, year] = datePart.split(" ");
+        
+        const monthMap: any = { 
+          "Jan": "01", "Feb": "02", "Mar": "03", "Apr": "04", "May": "05", "Jun": "06", 
+          "Jul": "07", "Aug": "08", "Sep": "09", "Oct": "10", "Nov": "11", "Dec": "12" 
+        };
+        
+        const month = monthMap[monthName] || "01";
+        // Hasil akhir: YYYY-MM-DD
+        return `${year}-${month}-${day.padStart(2, '0')}`;
+      } catch (e) {
+        return null;
+      }
     };
 
     const itemDate = parseDate(item.waktu_masuk);
-    if (startDate && itemDate < startDate) return false;
-    if (endDate && itemDate > endDate) return false;
+    if (!itemDate) return true;
+
+    // 2. Debugging: Buka console browser untuk memastikan format cocok
+    // console.log("Data Date:", itemDate, "Filter:", startDate, "to", endDate);
+
+    // 3. Logika Filter yang benar
+    const isAfterStart = startDate ? itemDate >= startDate : true;
+    const isBeforeEnd = endDate ? itemDate <= endDate : true;
     
-    return true;
+    return isAfterStart && isBeforeEnd;
   });
 }, [data, startDate, endDate]);
 
@@ -103,8 +122,8 @@ export function RiwayatPenggunaanRuangPage() {
         <LoanFilterCard 
             startDate={startDate} endDate={endDate} 
             onStartDateChange={(v) => { setStartDate(v); setCurrentPage(1); }}
-            onEndDateChange={(v) => { setEndingDate(v); setCurrentPage(1); }}
-            onClear={() => { setStartDate(""); setEndingDate(""); }} 
+            onEndDateChange={(v) => { setEndDate(v); setCurrentPage(1); }}
+            onClear={() => { setStartDate(""); setEndDate(""); }} 
         />
         <RiwayatPeminjamanAlatTable table={table} loading={loading} columnsCount={columns.length} />
         <LoanPagination currentPage={currentPage} totalPages={Math.ceil(filteredData.length / itemsPerPage) || 1} onPageChange={setCurrentPage} />
