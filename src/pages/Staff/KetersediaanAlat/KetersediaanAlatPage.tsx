@@ -260,8 +260,6 @@ export function KetersediaanAlatPage() {
             </div>
           </div>
         )}
-
-        {/* CONTROLLER TOOLBAR FILTERS */}
         <ToolbarInventory
           globalFilter={globalFilter}
           setGlobalFilter={setGlobalFilter}
