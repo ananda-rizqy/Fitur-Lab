@@ -6,7 +6,7 @@ const api = axios.create({
     Accept: "application/json",
     "ngrok-skip-browser-warning": "69420",
   },
-});
+}); 
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
