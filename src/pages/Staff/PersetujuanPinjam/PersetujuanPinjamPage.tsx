@@ -372,8 +372,28 @@ export function PersetujuanPinjamPage() {
                 <div className="font-sans font-black text-zinc-800 dark:text-zinc-200 text-xs">
                   {item.ruangan_lab}
                 </div>
-                {/* 2. PERBAIKAN: Menampilkan Tujuan Penggunaan */}
-                <div className="text-[10px] font-sans text-zinc-400 dark:text-zinc-500 truncate max-w-[140px] mt-0.5 font-medium">
+  
+                {/* 1. Menampilkan Jenis Peminjaman */}
+                <div className="text-[10px] font-mono font-bold text-zinc-500 uppercase mt-1">
+                  Tipe Peminjaman: {item.jenis_peminjaman || "-"}
+                </div>
+
+                {/* 2. Logika Menampilkan Waktu Mulai & Selesai JIKA pesanan */}
+                {item.jenis_peminjaman?.toLowerCase() === 'pesanan' && (
+                  <div className="mt-2 p-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-[10px] font-mono">
+                    <div className="text-zinc-400">Jadwal:</div>
+                    <div className="font-black text-zinc-900 dark:text-zinc-100">
+                      {new Date(item.waktu_mulai).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}{" "}
+                      {new Date(item.waktu_mulai).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
+                    </div>
+                    <div className="font-black text-zinc-900 dark:text-zinc-100">
+                      s/d {new Date(item.waktu_selesai).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Tujuan Penggunaan */}
+                <div className="text-[10px] font-sans text-zinc-400 dark:text-zinc-500 truncate max-w-[140px] mt-2 font-medium">
                   Tujuan: {item.tujuan_penggunaan || "-"}
                 </div>
               </TableCell>

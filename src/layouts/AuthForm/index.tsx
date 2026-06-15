@@ -18,7 +18,7 @@ export function AuthLayout({ titleCard, descriptionContent, children }: Props) {
       <Card className="px-4 py-6 w-xl gap-6 shadow-[4px_4px_0px_0px_rgba(9,9,11,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] ">
         <CardHeader className="flex items-center gap-6">
           <img
-            src="../../../public/img/Logo-Polines.png"
+            src="/img/Logo-Polines.png"
             alt="logo-polines"
             className="w-16 "
           />
