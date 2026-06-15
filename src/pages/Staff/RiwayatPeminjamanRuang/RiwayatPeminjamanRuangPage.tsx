@@ -113,10 +113,14 @@ export function RiwayatPeminjamanRuangPage() {
         {/* Filter Card (Search bar otomatis hilang karena tidak ada props search) */}
         <LoanFilterCard 
           startDate={startDate} 
-          endDate={startDate} 
+          endDate={endDate} 
           onStartDateChange={(v) => { setStartDate(v); setCurrentPage(1); }}
-          onEndDateChange={(v) => { setStartDate(v); setCurrentPage(1); }}
-          onClear={() => { setStartDate(""); }} 
+          onEndDateChange={(v) => { setEndDate(v); setCurrentPage(1); }}
+          onClear={() => { 
+            setStartDate(""); 
+            setEndDate("");
+            setCurrentPage(1);
+          }}
         />
 
         <div className="bg-white p-4 border-2 border-zinc-950 shadow-[4px_4px_0px_0px_rgba(9,9,11,1)]">
