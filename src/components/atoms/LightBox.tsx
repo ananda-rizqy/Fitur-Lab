@@ -23,7 +23,7 @@ export function Lightbox({ src, onClose }: LightboxProps) {
       </Button>
       <img
         src={src}
-        className="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl border border-zinc-800 grayscale hover:grayscale-0 transition-all duration-500 bg-zinc-900"
+        className="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl border border-zinc-800 bg-zinc-900 transition-all duration-500"
         alt="Detail Dokumentasi Ruang Lab"
       />
     </div>
