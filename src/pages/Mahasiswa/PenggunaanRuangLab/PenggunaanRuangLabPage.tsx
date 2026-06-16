@@ -39,6 +39,15 @@ export function PenggunaanRuangLabPage() {
   const webcamRef = useRef<Webcam>(null);
   const [showCamera, setShowCamera] = useState(false);
 
+  useEffect(() => {
+    const savedId = localStorage.getItem("active_laporan_id");
+    if (savedId) {
+      setIdLaporan(parseInt(savedId));
+      setStep("keluar");
+    }
+    refreshStatusRuang();
+  }, []);
+
   const refreshStatusRuang = useCallback(() => {
     api.get('/ruang/aktif').then(res => setRuangSibuk(res.data.map(Number)));
   }, []);
@@ -71,16 +80,24 @@ export function PenggunaanRuangLabPage() {
 
     try {
       const res = await api.post(step === "masuk" ? "/ruang/masuk" : `/ruang/keluar/${idLaporan}`, data);
-      Swal.fire("Berhasil", "Data tersimpan", "success");
+      Swal.fire("Berhasil", "Data berhasil disimpan", "success");
       
-      refreshStatusRuang();
-      if (step === "masuk") { setIdLaporan(res.data.data.id); setStep("keluar"); }
-      else { setStep("masuk"); setIdLaporan(null); }
+      if (step === "masuk") {
+        const newId = res.data.data.id;
+        setIdLaporan(newId);
+        setStep("keluar");
+        localStorage.setItem("active_laporan_id", newId.toString());
+      } else {
+        setStep("masuk");
+        setIdLaporan(null);
+        localStorage.removeItem("active_laporan_id");
+      }
       
       setFormData({ laboratorium: "", kondisi: "", keperluan: "", jam_mulai: "", jam_selesai: "", fotoPreview: null });
       setImageFile(null);
+      refreshStatusRuang();
     } catch (err: any) {
-      Swal.fire("Gagal", err.response?.data?.message || "Terjadi kesalahan", "error");
+      Swal.fire("Gagal", err.response?.data?.message || "Terjadi kesalahan sistem", "error");
     } finally {
       setLoading(false);
     }
