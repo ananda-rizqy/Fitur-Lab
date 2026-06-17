@@ -140,7 +140,7 @@ export function PersetujuanPinjamPage() {
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <StatCard title="Total Log" value={stats.total} icon={<Inbox size={14} />} />
-            <StatCard title="Menunggu Aksi" value={stats.menunggu} icon={<Clock size={14} />} />
+            <StatCard title="Menunggu" value={stats.menunggu} icon={<Clock size={14} />} />
             <StatCard title="Disetujui/Selesai" value={stats.selesai} icon={<Check size={14} />} />
             <StatCard title="Berlangsung" value={stats.berlangsung} icon={<Activity size={14} />} />
           </div>
