@@ -65,7 +65,6 @@ export function RiwayatPeminjamanAlat() {
     
     return data.filter((item: any) => {
       if (statusFilter !== "all" && item.status !== statusFilter) return false;
-
       if (classFilter !== "all" && item.kelas_mahasiswa !== classFilter) return false;
 
       const matchesSearch = searchQuery 
@@ -78,7 +77,7 @@ export function RiwayatPeminjamanAlat() {
       const itemDate = (item.waktu_pinjam || item.created_at || "").substring(0, 10);
       return (!startDate || itemDate >= startDate) && (!endDate || itemDate <= endDate);
     });
-  }, [data, statusFilter, startDate, endDate, searchQuery]);
+  }, [data, statusFilter, startDate, endDate, searchQuery, classFilter]);
 
   const columns = useMemo(() => getColumns(setSelectedImg), []);
 
