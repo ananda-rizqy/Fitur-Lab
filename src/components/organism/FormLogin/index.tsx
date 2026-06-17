@@ -57,12 +57,12 @@ export function FormLogin({ captchaInput, captchaString }: FormLoginProps) {
       {/* Email */}
       <div className="space-y-2">
         <label className="text-sm font-semibold">
-          Email 
+          NIM
         </label>
 
         <input
           type="text"
-          placeholder="Masukkan Email"
+          placeholder="Masukkan NIM"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="w-full h-12 rounded-md border border-gray-300 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
