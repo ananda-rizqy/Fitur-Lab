@@ -111,10 +111,10 @@ export function ToolbarInventory({
       {/* 5. AREA KANAN: CONTROLLER BARIS PER HALAMAN */}
       <div className="flex items-center justify-between sm:justify-end gap-3 w-full xl:w-auto border-t-2 xl:border-t-0 pt-4 xl:pt-0 border-zinc-200 dark:border-zinc-800 shrink-0">
         <span className="text-[10px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">
-          BARIS PER HALAMAN:
+          {/* BARIS PER HALAMAN: */}
         </span>
         
-        <div className="relative w-24">
+        {/* <div className="relative w-24">
           <select
             value={pageSize}
             onChange={(e) => setPageSize(Number(e.target.value))}
@@ -129,7 +129,7 @@ export function ToolbarInventory({
           <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-zinc-950 dark:text-white font-black border-l-2 border-zinc-950 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800">
             ▼
           </div>
-        </div>
+        </div> */}
 
       </div>
 
