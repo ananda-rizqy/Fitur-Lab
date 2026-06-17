@@ -104,7 +104,8 @@ export function PenggunaanRuangLabPage() {
   };
 
   return (
-    <PageLayout pageTitle="Logbook Ruangan">
+    <PageLayout  pageTitle="Penggunaan Ruang Lab"
+      pageDescription="Harap mengisi kondisi fisik laboratorium sebelum dan sesudah digunakan praktikum.">
       <Card className="p-6 border-2 border-zinc-950 rounded-none">
         <form onSubmit={handleSubmit} className="space-y-6">
           {step === "masuk" && (
