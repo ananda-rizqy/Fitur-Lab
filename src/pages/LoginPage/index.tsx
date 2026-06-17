@@ -25,7 +25,7 @@ export function LoginPage() {
   return (
     <div className="flex items-center justify-center min-h-screen w-full overflow-hidden p-4">
       <AuthLayout
-        titleCard="Login to your account"
+        titleCard="Login to your account simadu"
         descriptionContent="Enter your credentials below to login to your account"
       >
         <div className="flex flex-col gap-6">

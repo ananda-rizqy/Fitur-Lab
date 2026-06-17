@@ -117,12 +117,17 @@ export function PersetujuanPinjamPage() {
   }, [dataPinjam, classFilter, accStatusFilter]);
 
   const stats = useMemo(() => ({
-    total: filteredData.length,
-    pending: filteredData.filter((i: any) => i.status === "pending").length,
-    booking: filteredData.filter((i: any) => i.status === "booking" || i.status === "pesanan").length,
-    approved: filteredData.filter((i: any) => i.status === "approved" || i.status === "disetujui").length,
-    ongoing: filteredData.filter((i: any) => i.status === "ongoing").length,
-  }), [filteredData]);
+  total: filteredData.length,
+  menunggu: filteredData.filter((i: any) => 
+    ["pending", "menunggu"].includes(i.status?.toLowerCase())
+  ).length,
+  selesai: filteredData.filter((i: any) => 
+    ["approved", "disetujui", "selesai"].includes(i.status?.toLowerCase())
+  ).length,
+  berlangsung: filteredData.filter((i: any) => 
+    i.status?.toLowerCase() === "ongoing"
+  ).length,
+}), [filteredData]);
 
   const totalPages = Math.ceil(filteredData.length / itemsPerPage) || 1;
   const paginatedData = useMemo(() => filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage), [filteredData, currentPage]);
@@ -133,12 +138,11 @@ export function PersetujuanPinjamPage() {
         {loading ? (
             <div className="py-20 flex flex-col items-center gap-2"><Loader2 className="animate-spin" size={28} /><p className="text-[10px] font-mono font-black uppercase tracking-widest text-zinc-400">Sinkronisasi...</p></div>
         ) : (
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-            <StatCard title="Total log" value={stats.total} icon={<Inbox size={14} />} />
-            <StatCard title="Booking" value={stats.booking} icon={<CalendarIcon size={14} />} />
-            <StatCard title="Menunggu" value={stats.pending} icon={<Clock size={14} />} />
-            <StatCard title="Disetujui" value={stats.approved} icon={<Check size={14} />} />
-            <StatCard title="Berlangsung" value={stats.ongoing} icon={<Activity size={14} />} />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <StatCard title="Total Log" value={stats.total} icon={<Inbox size={14} />} />
+            <StatCard title="Menunggu Aksi" value={stats.menunggu} icon={<Clock size={14} />} />
+            <StatCard title="Disetujui/Selesai" value={stats.selesai} icon={<Check size={14} />} />
+            <StatCard title="Berlangsung" value={stats.berlangsung} icon={<Activity size={14} />} />
           </div>
         )}
 
