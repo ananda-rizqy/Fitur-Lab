@@ -114,12 +114,12 @@ export function CheckoutFormStep({
         <Card className="p-4 border-2 border-zinc-950 dark:border-zinc-800 rounded-none bg-zinc-50/50 dark:bg-zinc-950/20 shadow-none gap-4 flex flex-col">
           <Label className="text-xs font-mono font-black text-zinc-900 dark:text-white  tracking-widest flex items-center gap-1.5">
             <CalendarDays size={12} className="text-zinc-400" />
-            <span>Penjadwalan Praktikum (Booking)</span>
+            <span>Penjadwalan Praktikum</span>
           </Label>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs text-zinc-400 dark:text-zinc-500 font-mono font-black tracking-widest  pl-0.5">
-                Mulai / Booking:
+                Mulai 
               </Label>
               <Input
                 type="datetime-local"
@@ -144,13 +144,11 @@ export function CheckoutFormStep({
           </div>
           {!startTime && (
             <p className="text-xs text-zinc-400 dark:text-zinc-500 font-mono font-black tracking-wider  mt-1 leading-normal pl-0.5">
-              * Kosongkan kolom waktu jika Anda ingin langsung meminjam dan
-              menggunakan alat di laboratorium saat ini.
             </p>
           )}
         </Card>
 
-        <div className="flex flex-col gap-1.5">
+        {/* <div className="flex flex-col gap-1.5">
           <Label className="text-xs font-mono font-black text-zinc-400 dark:text-zinc-500  tracking-widest flex items-center gap-1.5 pl-0.5">
             <Camera size={11} className="text-zinc-400" />
             <span>Foto Kondisi Fisik Alat (Before):</span>
@@ -229,7 +227,7 @@ export function CheckoutFormStep({
               </div>
             </div>
           )}
-        </div>
+        </div> */}
 
         <Card
           variant="brutal"
