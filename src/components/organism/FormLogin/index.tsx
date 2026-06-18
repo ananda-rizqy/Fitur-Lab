@@ -32,6 +32,7 @@ export function FormLogin({ captchaInput, captchaString }: FormLoginProps) {
       const response = await api.post("/auth/sync", { email, password });
       localStorage.setItem("auth", JSON.stringify(response.data));
       localStorage.setItem("token", response.data.token);
+      localStorage.removeItem("guideShown");
       window.location.replace("/dashboard");
     } catch (error: any) {
       const msg = error.response?.data?.message || "Koneksi ke server gagal.";
