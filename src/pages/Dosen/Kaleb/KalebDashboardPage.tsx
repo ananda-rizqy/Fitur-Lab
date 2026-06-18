@@ -5,8 +5,7 @@ export const KalebDashboard = () => {
   return (
     <PageLayout 
       pageTitle="Manajemen Kaleb" 
-      pageDescription="Atur penugasan gedung untuk staf laboratorium."
-    >
+      pageDescription="Atur penugasan gedung untuk staf laboratorium.">
       <div className="py-6 w-full">
         <TabelManajemenTendik />
       </div>
