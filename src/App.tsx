@@ -30,6 +30,7 @@ import { PemantauanRuangPage } from "./pages/Dosen/PemantauanRuang/PemantauanRua
 import { PemantauanAlatPage } from "./pages/Dosen/PemantauanAlat/PemantauanAlatPage";
 import { ClassPage } from "./pages/ClassPage/ClassPage";
 import { LaporanAsetPage } from "./pages/Laporan/LaporanAsetPage";
+import { KalebDashboard } from "./pages/Dosen/Kaleb/KalebDashboardPage";
 
 function App() {
   return (
@@ -103,6 +104,7 @@ function App() {
           <Route path="/riwayat-ruang" element={<PemantauanRuangPage />} />
           <Route path="/riwayat-alat" element={<PemantauanAlatPage />} />
           <Route path="/laporan-aset" element={<LaporanAsetPage />} />
+          <Route path="/manajemen-tendik" element={<KalebDashboard />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

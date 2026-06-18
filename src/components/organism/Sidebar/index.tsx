@@ -16,6 +16,8 @@ import {
   IconFilePlus,
   IconCalendarTime,
   IconTool,
+  IconUser,
+  IconUserCheck,
 } from "@tabler/icons-react";
  
 import {
@@ -75,6 +77,12 @@ const items = [
     url: "/laporan-aset",
     icon: IconCalendarTime,
     roles: ["tendik", "dosen"],
+  },
+  {
+    title: "Manajemen Tendik",
+    url: "/manajemen-tendik",
+    icon: IconUser,
+    roles: ["dosen"],
   },
   {
     title: "Persetujuan Pinjam",
