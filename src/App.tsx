@@ -30,7 +30,7 @@ import { PemantauanRuangPage } from "./pages/Dosen/PemantauanRuang/PemantauanRua
 import { PemantauanAlatPage } from "./pages/Dosen/PemantauanAlat/PemantauanAlatPage";
 import { ClassPage } from "./pages/ClassPage/ClassPage";
 import { LaporanAsetPage } from "./pages/Laporan/LaporanAsetPage";
-import { KalebDashboard } from "./pages/Dosen/Kaleb/KalebDashboardPage";
+import { KalebDashboard } from "./pages/Dosen/Kaleb/KalebDashboardPage"; 
 
 function App() {
   return (
