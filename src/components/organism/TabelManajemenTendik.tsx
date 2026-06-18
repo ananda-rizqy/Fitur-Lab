@@ -15,9 +15,8 @@ export const TabelManajemenTendik = () => {
 
   const fetchBuildings = async () => {
     try {
-      // Pastikan endpoint ini ada di Laravel Anda
       const res = await api.get("/ruangan-list"); 
-      setAllBuildings(res.data); // Sesuaikan dengan struktur JSON dari API Anda
+      setAllBuildings(res.data);
     } catch (err) {
       console.error("Gagal mengambil daftar gedung", err);
     }
