@@ -12,7 +12,6 @@ export function Dashboard() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Modal popup
   const [showGuide, setShowGuide] = useState(false);
   const closeGuide = () => {
   localStorage.setItem("guideShown", "true");
