@@ -20,37 +20,37 @@ export function Header({ title, description, onLogout }: HeaderProps) {
   const [isDark, setIsDark] = React.useState(false);
   const [user, setUser] = useState<Student | null>(null);
 
-  const handleLogOutClick = () => {
-    Swal.fire({
-      title: "KELUAR SISTEM?",
-      text: "Anda harus memasukkan ulang kredensial NIM untuk mengakses kembali dasbor inventaris lab.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#ef4444",
-      cancelButtonColor: "#18181b",
-      confirmButtonText: "YA, KELUAR",
-      cancelButtonText: "BATAL",
-      allowOutsideClick: false,
-      background: document.documentElement.classList.contains("dark")
-        ? "#18181b"
-        : "#ffffff",
-      color: document.documentElement.classList.contains("dark")
-        ? "#f4f4f5"
-        : "#09090b",
-      customClass: {
-        container: "z-[99999]",
-      },
-    }).then((result) => {
-      if (result.isConfirmed) {
-        if (onLogout) {
-          onLogout();
-        } else {
-          localStorage.clear();
-          window.location.replace("/");
-        }
-      }
-    });
-  };
+  // const handleLogOutClick = () => {
+  //   Swal.fire({
+  //     title: "KELUAR SISTEM?",
+  //     text: "Anda harus memasukkan ulang kredensial NIM untuk mengakses kembali dasbor inventaris lab.",
+  //     icon: "warning",
+  //     showCancelButton: true,
+  //     confirmButtonColor: "#ef4444",
+  //     cancelButtonColor: "#18181b",
+  //     confirmButtonText: "YA, KELUAR",
+  //     cancelButtonText: "BATAL",
+  //     allowOutsideClick: false,
+  //     background: document.documentElement.classList.contains("dark")
+  //       ? "#18181b"
+  //       : "#ffffff",
+  //     color: document.documentElement.classList.contains("dark")
+  //       ? "#f4f4f5"
+  //       : "#09090b",
+  //     customClass: {
+  //       container: "z-[99999]",
+  //     },
+  //   }).then((result) => {
+  //     if (result.isConfirmed) {
+  //       if (onLogout) {
+  //         onLogout();
+  //       } else {
+  //         localStorage.clear();
+  //         window.location.replace("/");
+  //       }
+  //     }
+  //   });
+  // };
 
   const fetchData = React.useCallback(() => {
     const authStorage = localStorage.getItem("auth");
@@ -128,14 +128,14 @@ export function Header({ title, description, onLogout }: HeaderProps) {
           </div>
         </div>
 
-        <Button
+        {/* <Button
           variant="brutal"
           size="icon"
           color="red"
           onClick={handleLogOutClick}
         >
           <LogOut size={13} />
-        </Button>
+        </Button> */}
       </div>
     </header>
   );
