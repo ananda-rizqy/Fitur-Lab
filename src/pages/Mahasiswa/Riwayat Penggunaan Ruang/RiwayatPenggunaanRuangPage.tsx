@@ -42,14 +42,12 @@ export function RiwayatPenggunaanRuangPage() {
   return data.filter((item) => {
     if (!item.waktu_masuk) return true;
 
-    // 1. Parser khusus untuk format "15/06/2026 14:08"
     const parseDate = (dateStr: string) => {
       try {
         // Ambil bagian tanggal: "15/06/2026"
         const datePart = dateStr.split(" ")[0]; 
         const [day, month, year] = datePart.split("/");
         
-        // Buat format standar ISO YYYY-MM-DD
         return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
       } catch (e) {
         return null;
@@ -58,7 +56,6 @@ export function RiwayatPenggunaanRuangPage() {
 
     const itemDate = parseDate(item.waktu_masuk);
     
-    // Debugging (cek di Console browser)
     console.log("Data Date:", itemDate, "| Filter:", startDate, "s/d", endDate);
 
     if (!itemDate) return true;
@@ -74,7 +71,6 @@ export function RiwayatPenggunaanRuangPage() {
   const stats = useMemo(() => {
   return {
     total: filteredData.length,
-    // Tambahkan "belum check-out" ke dalam daftar status aktif
     aktif: filteredData.filter((i) => {
       const status = i.status?.toLowerCase().trim();
       const kondisiKeluar = i.kondisi_keluar?.toLowerCase().trim();
@@ -110,7 +106,7 @@ export function RiwayatPenggunaanRuangPage() {
   });
 
   return (
-    <PageLayout pageTitle="Riwayat Penggunaan Ruang" pageDescription="...">
+    <PageLayout pageTitle="Riwayat Penggunaan Ruang" pageDescription="Daftar rekam jejak penggunaan laboratorium">
       <div className="py-6 w-full space-y-6">
         <StatsSummaryGridRuang stats={stats} />
         <LoanFilterCard 
