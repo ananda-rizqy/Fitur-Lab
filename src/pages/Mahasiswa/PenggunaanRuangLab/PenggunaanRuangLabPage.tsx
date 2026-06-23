@@ -7,6 +7,7 @@ import { Card } from "../../../components/ui/card";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { PageLayout } from "../../../layouts/PageLayout";
+import { Label } from "../../../components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select";
 
 const RUANGAN_LIST = [
@@ -104,57 +105,90 @@ export function PenggunaanRuangLabPage() {
   };
 
   return (
-    <PageLayout  pageTitle="Penggunaan Ruang Lab"
-      pageDescription="Harap mengisi kondisi fisik laboratorium sebelum dan sesudah digunakan praktikum.">
-      <Card className="p-6 border-2 border-zinc-950 rounded-none">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {step === "masuk" && (
-            <div className="grid md:grid-cols-2 gap-5">
-              <Select value={formData.laboratorium} onValueChange={(val) => setFormData({...formData, laboratorium: val})}>
-                <SelectTrigger><SelectValue placeholder="Pilih Lab" /></SelectTrigger>
-                <SelectContent>
-                  {RUANGAN_LIST.map(r => (
-                    <SelectItem key={r.id} value={r.id.toString()} disabled={ruangSibuk.includes(r.id)}>
-                      {r.name} {ruangSibuk.includes(r.id) ? "(SEDANG DIPAKAI)" : ""}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Input required placeholder="Tujuan" onChange={(e) => setFormData({...formData, keperluan: e.target.value})} />
-              <Input type="datetime-local" required onChange={(e) => setFormData({...formData, jam_mulai: e.target.value})} />
-              <Input type="datetime-local" required onChange={(e) => setFormData({...formData, jam_selesai: e.target.value})} />
-            </div>
-          )}
-          <Select value={formData.kondisi} onValueChange={(val) => setFormData({...formData, kondisi: val})}>
-            <SelectTrigger><SelectValue placeholder="Kondisi Ruangan" /></SelectTrigger>
-            <SelectContent><SelectItem value="Bersih">Bersih</SelectItem><SelectItem value="Kotor">Kotor</SelectItem></SelectContent>
-          </Select>
-          <div className="h-44 border-2 border-dashed flex items-center justify-center cursor-pointer" onClick={() => setShowCamera(true)}>
-             {formData.fotoPreview ? <img src={formData.fotoPreview} className="h-full object-cover"/> : <Camera/>}
+    <PageLayout 
+  pageTitle="Penggunaan Ruang Lab"
+  pageDescription="Harap mengisi kondisi fisik laboratorium sebelum dan sesudah digunakan praktikum."
+>
+  <Card className="p-6 border-2 border-zinc-950 rounded-none">
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {step === "masuk" && (
+        <div className="grid md:grid-cols-2 gap-5">
+          {/* Lokasi Lab */}
+          <div className="flex flex-col gap-1.5">
+            <Label className="text-[10px] font-mono font-black text-zinc-400 uppercase tracking-widest pl-0.5">Lab:</Label>
+            <Select value={formData.laboratorium} onValueChange={(val) => setFormData({...formData, laboratorium: val})}>
+              <SelectTrigger><SelectValue placeholder="Pilih Lab" /></SelectTrigger>
+              <SelectContent>
+                {RUANGAN_LIST.map(r => (
+                  <SelectItem key={r.id} value={r.id.toString()} disabled={ruangSibuk.includes(r.id)}>
+                    {r.name} {ruangSibuk.includes(r.id) ? "(SEDANG DIPAKAI)" : ""}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-          {showCamera && (
-              <div className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center">
-                <Webcam 
-                  audio={false} 
-                  ref={webcamRef} 
-                  screenshotFormat="image/jpeg" 
-                  videoConstraints={{ 
-                    facingMode: "environment" 
-                  }}
-                  className="w-full max-w-lg"
-                />
-                <Button 
-                  type="button" 
-                  onClick={capture} 
-                  className="mt-4 bg-white text-black hover:bg-zinc-200"
-                >
-                  Capture
-                </Button>
-              </div>
-            )}
-          <Button type="submit" disabled={loading} className="w-full">{loading ? <Loader2 className="animate-spin"/> : "KIRIM"}</Button>
-        </form>
-      </Card>
+
+          {/* Tujuan */}
+          <div className="flex flex-col gap-1.5">
+            <Label className="text-[10px] font-mono font-black text-zinc-400 uppercase tracking-widest pl-0.5">Tujuan:</Label>
+            <Input required placeholder="Kegiatan..." onChange={(e) => setFormData({...formData, keperluan: e.target.value})} />
+          </div>
+
+          {/* Estimasi Mulai */}
+          <div className="flex flex-col gap-1.5">
+            <Label className="text-[10px] font-mono font-black text-zinc-400 uppercase tracking-widest pl-0.5">Estimasi Jam Mulai:</Label>
+            <Input type="datetime-local" required onChange={(e) => setFormData({...formData, jam_mulai: e.target.value})} />
+          </div>
+
+          {/* Estimasi Selesai */}
+          <div className="flex flex-col gap-1.5">
+            <Label className="text-[10px] font-mono font-black text-zinc-400 uppercase tracking-widest pl-0.5">Estimasi Jam Selesai:</Label>
+            <Input type="datetime-local" required onChange={(e) => setFormData({...formData, jam_selesai: e.target.value})} />
+          </div>
+        </div>
+      )}
+
+      {/* Kondisi Ruangan */}
+      <div className="flex flex-col gap-1.5">
+        <Label className="text-[10px] font-mono font-black text-zinc-400 uppercase tracking-widest pl-0.5">Kondisi Ruangan:</Label>
+        <Select value={formData.kondisi} onValueChange={(val) => setFormData({...formData, kondisi: val})}>
+          <SelectTrigger><SelectValue placeholder="Pilih Kondisi" /></SelectTrigger>
+          <SelectContent><SelectItem value="Bersih">Bersih</SelectItem><SelectItem value="Kotor">Kotor</SelectItem></SelectContent>
+        </Select>
+      </div>
+
+      {/* Preview Foto */}
+      <div className="flex flex-col gap-1.5">
+        <Label className="text-[10px] font-mono font-black text-zinc-400 uppercase tracking-widest pl-0.5">Bukti Foto Kondisi:</Label>
+        <div className="h-44 border-2 border-dashed flex items-center justify-center cursor-pointer hover:border-zinc-950 transition-colors" onClick={() => setShowCamera(true)}>
+           {formData.fotoPreview ? <img src={formData.fotoPreview} className="h-full object-cover"/> : <Camera className="text-zinc-400"/>}
+        </div>
+      </div>
+
+      {showCamera && (
+        <div className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center">
+          <Webcam 
+            audio={false} 
+            ref={webcamRef} 
+            screenshotFormat="image/jpeg" 
+            videoConstraints={{ facingMode: "environment" }} 
+            className="w-full max-w-lg"
+          />
+          <Button 
+            type="button" 
+            onClick={capture} 
+            className="mt-4 bg-white text-black hover:bg-zinc-200 rounded-none font-black"
+          >
+            CAPTURE
+          </Button>
+        </div>
+      )}
+      
+      <Button type="submit" disabled={loading} className="w-full rounded-none font-black tracking-widest">
+        {loading ? <Loader2 className="animate-spin"/> : "KIRIM"}
+      </Button>
+    </form>
+  </Card>
     </PageLayout>
   );
 }
