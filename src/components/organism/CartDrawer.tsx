@@ -14,6 +14,7 @@ export const CartDrawer = ({
   children,
   onNext,
   step,
+  loading = false,
 }: any) => (
   <Drawer open={isOpen} onOpenChange={onClose} direction="right">
     <DrawerContent className="h-full ml-auto w-full max-w-md rounded-none">
