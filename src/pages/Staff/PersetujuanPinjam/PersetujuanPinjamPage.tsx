@@ -32,26 +32,38 @@ export function PersetujuanPinjamPage() {
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [alasanTolak, setAlasanTolak] = useState("");
-
+  const [lastCount, setLastCount] = useState<number>(0);
   const [classFilter, setClassFilter] = useState<string>("all");
   const [accStatusFilter, setAccStatusFilter] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 5;
 
   const fetchPeminjaman = async (showLoading = false) => {
-    try {
-      if (showLoading) setLoading(true);
-      const res = await api.get(`/peminjaman/semua?t=${Date.now()}`);
-      const rawData = Array.isArray(res.data) ? res.data : res.data.data || [];
-      setDataPinjam(rawData);
-    } catch (err) {
-      console.error("Gagal mengambil data peminjaman:", err);
-    } finally {
-      if (showLoading) setLoading(false);
+  try {
+    if (showLoading) setLoading(true);
+    const res = await api.get(`/peminjaman/semua?t=${Date.now()}`);
+    const rawData = Array.isArray(res.data) ? res.data : res.data.data || [];
+    
+    if (lastCount > 0 && rawData.length > lastCount) {
+        new Notification("Peminjaman Baru!", { 
+            body: `Ada ${rawData.length - lastCount} pengajuan peminjaman baru masuk.` 
+        });
     }
+    
+    setLastCount(rawData.length);
+    setDataPinjam(rawData);
+  } catch (err) {
+    console.error("Gagal mengambil data peminjaman:", err);
+  } finally {
+    if (showLoading) setLoading(false);
+  }
   };
 
   useEffect(() => {
+    if ("Notification" in window && Notification.permission !== "granted") {
+    Notification.requestPermission();
+  }
+  
     fetchPeminjaman(true);
     // Refresh otomatis setiap 30 detik
     const interval = setInterval(() => fetchPeminjaman(false), 30000);
