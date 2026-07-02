@@ -48,6 +48,7 @@ interface UserData {
   kelas: string;
   name?: string;
   role?: string;
+  nim_nip?: string;
 } 
 
 const items = [
@@ -158,6 +159,11 @@ const items = [
   },
 ];
 
+const nipKaleb = [
+  "197203292000031001",
+  "198809142022031006",
+];
+
 export function MySidebar() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -178,9 +184,20 @@ export function MySidebar() {
   }, [location.pathname]);
 
   const filteredItems = items.filter((item) => {
-    if (!item.roles) return true;
-    return item.roles.includes(userData?.role?.toLowerCase() || "");
-  });
+  if (!item.roles) return true;
+
+  const hasRole = item.roles.includes(
+    (userData?.role || "").toLowerCase()
+  );
+
+  if (!hasRole) return false;
+
+  if (item.url === "/manajemen-tendik") {
+    return nipKaleb.includes(userData?.nim_nip || "");
+  }
+
+  return true;
+});
 
   const mainItems = filteredItems.filter((i) =>
     ["Home", "Map", "History", "Class"].includes(i.title),
