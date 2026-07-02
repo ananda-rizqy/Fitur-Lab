@@ -47,6 +47,11 @@ export function SettingPage() {
     checkStatus();
   }, [location.pathname]);
 
+  const nomorIndukLabel =
+  userData?.role === "mahasiswa"
+    ? "Nomor Induk Mahasiswa (NIM)"
+    : "Nomor Induk Pegawai (NIP)";
+
   return (
     <PageLayout
       pageTitle="Pengaturan"
@@ -114,7 +119,7 @@ export function SettingPage() {
                     <div className="space-y-1">
                       <div className="flex items-center gap-1.5 text-zinc-400 dark:text-zinc-500">
                         <span className="text-sm font-mono font-black tracking-widest">
-                          Nomor Induk Mahasiswa (NIM)
+                             {nomorIndukLabel}
                         </span>
                       </div>
                       <p className="text-sm font-mono font-bold text-zinc-700 dark:text-zinc-300">
