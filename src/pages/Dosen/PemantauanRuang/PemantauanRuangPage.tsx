@@ -85,7 +85,7 @@ export function PemantauanRuangPage() {
   };
 
   return (
-    <PageLayout pageTitle="Pemantauan Ruang (Dosen)" pageDescription="Monitoring aktivitas ruang lab.">
+    <PageLayout pageTitle="Pemantauan Riwayat Ruang Lab" pageDescription="Monitoring aktivitas ruang laboratorium.">
       <div className="mx-auto w-full max-w-[1400px] px-6 py-6 space-y-6">
         {/* Stat Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
