@@ -94,7 +94,7 @@ export function PemantauanAlatPage() {
   };
 
   return (
-    <PageLayout pageTitle="Arsip Logbook Ruangan" pageDescription="Monitoring aktivitas ruang lab.">
+    <PageLayout pageTitle="Arsip Peminjaman Alat Mahasiswa" pageDescription="Monitoring aktivitas alat laboratorium.">
       <div className="mx-auto w-full max-w-[1400px] px-6 py-6 space-y-6">
         <StatsSummaryGrid stats={stats} />
         
