@@ -50,9 +50,10 @@ interface Device {
   id: number;
   device_names: string;
   mac_devices: string;
-  rssi1?: number | string;
+  rssi?: number | string;
   rssi2?: number | string;
   rssi3?: number | string;
+  rssi4?: number | string;
   tipe_device: string;
   status: boolean | number | string;
   x?: number | string;
@@ -73,9 +74,10 @@ export function DevicePage() {
   const [tipeDevice, setTipeDevice] = useState("Anchor");
   const [coordX, setCoordX] = useState("");
   const [coordY, setCoordY] = useState("");
-  const [rssi1Input, setRssi1Input] = useState("0");
+  const [rssiInput, setRssiInput] = useState("0");
   const [rssi2Input, setRssi2Input] = useState("0");
   const [rssi3Input, setRssi3Input] = useState("0");
+  const [rssi4Input, setRssi4Input] = useState("0");
 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 5;
@@ -116,10 +118,10 @@ export function DevicePage() {
         status: 1,
         x: coordX ? parseFloat(coordX) : 0,
         y: coordY ? parseFloat(coordY) : 0,
-        rssi: rssi1Input ? parseInt(rssi1Input) : 0,
-        rssi1: rssi1Input ? parseInt(rssi1Input) : 0,
+        rssi: rssiInput ? parseInt(rssiInput) : 0,
         rssi2: rssi2Input ? parseInt(rssi2Input) : 0,
         rssi3: rssi3Input ? parseInt(rssi3Input) : 0,
+        rssi4: rssi4Input ? parseInt(rssi4Input) : 0,
       };
 
       await api.post("/devices", payload);
@@ -130,9 +132,10 @@ export function DevicePage() {
       setTipeDevice("Anchor");
       setCoordX("");
       setCoordY("");
-      setRssi1Input("0");
+      setRssiInput("0");
       setRssi2Input("0");
       setRssi3Input("0");
+      setRssi4Input("0");
       setIsOpenForm(false);
       setCurrentPage(1);
       fetchDevices();
@@ -166,14 +169,15 @@ export function DevicePage() {
       },
       { accessorKey: "tipe_device", header: "Type" },
       {
-        header: "RSSI (1/2/3)",
+        header: "RSSI (1/2/3/4)",
         cell: ({ row }) => {
-          const r1 = row.original.rssi1 ?? "-";
+          const r1 = row.original.rssi ?? "-";
           const r2 = row.original.rssi2 ?? "-";
           const r3 = row.original.rssi3 ?? "-";
+          const r4 = row.original.rssi4 ?? "-";
           return (
             <span className="font-mono text-zinc-500 dark:text-zinc-400">
-              {r1} / {r2} / {r3}
+              {r1} / {r2} / {r3} /{r4}
             </span>
           );
         },

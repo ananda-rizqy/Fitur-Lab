@@ -45,7 +45,7 @@ const LAB_OPTIONS: LabConfig[] = [
     imageUrl: "/img/lab_barat_01.jpeg",
     bounds: [
       [0, 0],
-      [870, 740],
+       [764, 1600],
     ],
   },
   {
@@ -54,7 +54,7 @@ const LAB_OPTIONS: LabConfig[] = [
     imageUrl: "/img/lab_barat_02.jpeg",
     bounds: [
       [0, 0],
-      [870, 740],
+       [764, 1600],
     ],
   },
 ];

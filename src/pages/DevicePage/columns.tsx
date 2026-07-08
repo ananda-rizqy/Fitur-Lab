@@ -25,6 +25,10 @@ export const deviceColumns: ColumnDef<Device>[] = [
     header: "RSSI-3",
   },
   {
+    accessorKey: "rssi4",
+    header: "RSSI-4",
+  },
+  {
     accessorKey: "tipe_device",
     header: "Type",
     cell: ({ getValue }) => <TypeLabel type={getValue<boolean>()} />,
