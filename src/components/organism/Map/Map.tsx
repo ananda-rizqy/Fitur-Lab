@@ -1,17 +1,12 @@
 // @ts-nocheck
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { MapContainer, ImageOverlay, useMap } from "react-leaflet";
 import type { LatLngBoundsExpression, LatLngTuple } from "leaflet";
 import L from "leaflet";
 
 import "leaflet.marker.slideto";
 import "leaflet/dist/leaflet.css";
-import { Layers, MapPin, Check } from "lucide-react";
-import { Button } from "../../ui/button";
 
-// ==========================================
-// 1. DEFINISI TIPE DATA (GLOBAL SCOPE)
-// ==========================================
 export type Device = {
   id: number;
   device_names: string;
@@ -33,31 +28,18 @@ interface MapLabProps {
   focusTarget: LatLngTuple | null;
 }
 
-// ==========================================
-// 2. KONTROLER UTAMA & CONFIG PETA
-// ==========================================
 const scale = 100;
 
-const LAB_OPTIONS: LabConfig[] = [
-  {
-    id: "lab-barat-01",
-    name: "Lab Barat 01",
-    imageUrl: "/img/lab_barat_01.jpeg",
-    bounds: [
-      [0, 0],
-       [764, 1600],
-    ],
-  },
-  {
-    id: "lab-barat-02",
-    name: "Lab Barat 02",
-    imageUrl: "/img/lab_barat_02.jpeg",
-    bounds: [
-      [0, 0],
-       [764, 1600],
-    ],
-  },
-];
+
+const LAB_BARAT_01: LabConfig = {
+  id: "lab-barat-01",
+  name: "Lab Barat 01",
+  imageUrl: "/img/lab_barat_01.jpeg",
+  bounds: [
+    [0, 0],
+    [764, 1600],
+  ],
+};
 
 // Sub-komponen untuk memanipulasi view Leaflet Map secara langsung
 function MapController({ focusTarget }: { focusTarget: LatLngTuple | null }) {
@@ -78,84 +60,25 @@ function FitBounds({ bounds }: { bounds: LatLngBoundsExpression }) {
   return null;
 }
 
-// Komponen pembungkus tombol agar aman dari error properti warna varian
-const TolerantButton = ({ children, ...props }: any) => {
-  return <Button {...props}>{children}</Button>;
-};
-
-// ==========================================
-// 3. KOMPONEN UTAMA EXPORT: MapLab
-// ==========================================
 export function MapLab({ devices, focusTarget }: MapLabProps) {
-  const [activeLab, setActiveLab] = useState<LabConfig>(LAB_OPTIONS[0]);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const mapRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Map<number, L.Marker>>(new Map());
 
-  // Hapus semua marker lama saat berpindah Laboratorium agar tidak tumpang tindih
-  useEffect(() => {
-    if (mapRef.current) {
-      markersRef.current.forEach((marker) => marker.remove());
-      markersRef.current.clear();
-    }
-  }, [activeLab]);
-
   return (
     <div className="w-full h-full relative z-10 bg-zinc-100 overflow-hidden border border-zinc-200/80 shadow-xs group/map">
+      {/* Badge Nama Lab Statis (Tanpa Dropdown) */}
       <div className="absolute top-6 right-6 z-1000">
-        <div className="relative">
-          <TolerantButton
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            variant="brutal"
-          >
-            <Layers size={15} className="text-zinc-500" />
-            <span>{activeLab.name}</span>
-            <span
-              className={`text-[10px] text-zinc-400 transition-transform duration-300 ${isDropdownOpen ? "rotate-180" : ""}`}
-            >
-              ▼
-            </span>
-          </TolerantButton>
-
-          {isDropdownOpen && (
-            <div className="absolute top-14 right-0 w-56 bg-white border-2 border-zinc-950 shadow-[4px_4px_0px_0px_rgba(9,9,11,1)] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-              <div className="p-2.5 bg-zinc-50 border-b-2 border-zinc-950 flex items-center gap-2">
-                <MapPin size={12} className="text-zinc-400" />
-                <span className="text-[9px] font-mono font-black uppercase text-zinc-400 tracking-widest">
-                  Pilih Ruang Lab
-                </span>
-              </div>
-              <div className="p-1.5 space-y-1">
-                {LAB_OPTIONS.map((lab) => (
-                  <TolerantButton
-                    key={lab.id}
-                    onClick={() => {
-                      setActiveLab(lab);
-                      setIsDropdownOpen(false);
-                    }}
-                    className={`w-full h-10 px-3 font-sans font-bold text-xs uppercase tracking-wide flex items-center justify-between transition-colors ${
-                      activeLab.id === lab.id
-                        ? "bg-zinc-950 text-white hover:bg-zinc-900"
-                        : "text-zinc-700 hover:bg-zinc-100"
-                    }`}
-                  >
-                    <span>{lab.name}</span>
-                    {activeLab.id === lab.id && (
-                      <Check size={14} className="text-white" />
-                    )}
-                  </TolerantButton>
-                ))}
-              </div>
-            </div>
-          )}
+        <div className="px-3 py-1.5 bg-white border-2 border-zinc-950 font-sans font-bold text-xs uppercase tracking-wide shadow-[2px_2px_0px_0px_rgba(9,9,11,1)] flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>{LAB_BARAT_01.name}</span>
         </div>
       </div>
 
       {/* INTERFACES PETA LEAFLET */}
       <MapContainer
-        key={activeLab.id}
+        key={LAB_BARAT_01.id}
         crs={L.CRS.Simple}
-        bounds={activeLab.bounds}
+        bounds={LAB_BARAT_01.bounds}
         minZoom={-1}
         maxZoom={1}
         className="w-full h-full"
@@ -163,9 +86,9 @@ export function MapLab({ devices, focusTarget }: MapLabProps) {
           mapRef.current = el;
         }}
       >
-        <FitBounds bounds={activeLab.bounds} />
+        <FitBounds bounds={LAB_BARAT_01.bounds} />
         <MapController focusTarget={focusTarget} />
-        <ImageOverlay url={activeLab.imageUrl} bounds={activeLab.bounds} />
+        <ImageOverlay url={LAB_BARAT_01.imageUrl} bounds={LAB_BARAT_01.bounds} />
 
         {/* Pemanggilan Layer Marker Internal */}
         <DevicesLayerInternal devices={devices} markersRef={markersRef} />
@@ -174,9 +97,6 @@ export function MapLab({ devices, focusTarget }: MapLabProps) {
   );
 }
 
-// ==========================================
-// 4. LAYER SUB-KOMPONENT UNTUK DEVICE MARKER
-// ==========================================
 function DevicesLayerInternal({
   devices,
   markersRef,
@@ -217,7 +137,7 @@ function DevicesLayerInternal({
         const isOnline = Number(device.status ?? 1) === 1;
 
         const generatePopupContent = () => `
-          <div class="p-5 bg-white text-zinc-900 border-2 border-zinc-950 text-left min-w-[280px] max-w-[320px] shadow-[4px_4px_0px_0px_rgba(9,9,11,1)]  font-sans space-y-4">
+          <div class="p-5 bg-white text-zinc-900 border-2 border-zinc-950 text-left min-w-[280px] max-w-[320px] shadow-[4px_4px_0px_0px_rgba(9,9,11,1)] font-sans space-y-4">
             <div class="flex items-center gap-3">
               <div class="h-11 w-11 bg-zinc-100 border-2 border-zinc-200 flex items-center justify-center text-zinc-900 shrink-0 font-black text-xs font-mono shadow-inner">
                 ${device.device_names ? device.device_names.substring(0, 2).toUpperCase() : "TG"}
