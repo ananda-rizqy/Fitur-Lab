@@ -100,9 +100,14 @@ export const getColumns = (
       const cardStyle = "border-2 border-zinc-900 p-2 text-[10px] font-mono shadow-[3px_3px_0px_0px_rgba(9,9,11,1)]";
       return (
         <div className="flex flex-col gap-2 min-w-[140px]">
-          <div className={`${cardStyle} bg-emerald-50`}>IN: {format(row.original.created_at)}</div>
+          {/* Gunakan waktu_pinjam untuk IN */}
+          <div className={`${cardStyle} bg-emerald-50`}>
+            IN: {format(row.original.waktu_pinjam)}
+          </div>
+
+          {/* Gunakan waktu_kembali untuk OUT */}
           <div className={`${cardStyle} ${row.original.waktu_kembali ? "bg-slate-50" : "bg-amber-50"}`}>
-            OUT: {format(row.original.waktu_kembali)}
+            OUT: {row.original.waktu_kembali ? format(row.original.waktu_kembali) : "Belum Kembali"}
           </div>
         </div>
       );

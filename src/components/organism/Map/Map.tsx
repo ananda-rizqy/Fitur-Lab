@@ -112,8 +112,8 @@ function DevicesLayerInternal({
     devices.forEach((device) => {
       if (!device || device.x === undefined || device.y === undefined) return;
 
-      const posX = Number(device.x) * scale;
-      const posY = Number(device.y) * scale;
+      const posX = Number(device.x) * 340;
+      const posY = Number(device.y) * 70;
       const position: LatLngTuple = [posY, posX];
 
       const customHTML = `

@@ -24,6 +24,7 @@ import { Button } from "../../components/ui/button";
 import { PageLayout } from "../../layouts/PageLayout";
 import { LoanPagination } from "../../components/organism/LoanPagination";
 import { AddDeviceModal } from "../../components/molecules/AddDeviceModal";
+import { EditDeviceModal } from "../../components/molecules/EditDeviceModal"; // 💡 Pastikan Anda mengimpor EditDeviceModal
 import {
   IconLoader2,
   IconPlus,
@@ -58,11 +59,14 @@ export function DevicePage() {
   const [isOpenForm, setIsOpenForm] = useState(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(5);
-
-  // 💡 1. Tambahkan State Baru untuk Filter Status
   const [statusFilter, setStatusFilter] = useState<
     "all" | "online" | "offline"
   >("all");
+
+  // 💡 State Baru Untuk Mengatur Aksi Edit Perangkat
+  const [isOpenEditForm, setIsOpenEditForm] = useState(false);
+  const [selectedDeviceForEdit, setSelectedDeviceForEdit] =
+    useState<Device | null>(null);
 
   const fetchDevices = async () => {
     setApiLoading(true);
@@ -81,7 +85,6 @@ export function DevicePage() {
     fetchDevices();
   }, []);
 
-  // 💡 2. Filter Data Berdasarkan Logika Waktu & Atribut Status (Sama seperti kolom status kamu)
   const filteredDevices = useMemo(() => {
     if (statusFilter === "all") return devices;
 
@@ -89,7 +92,6 @@ export function DevicePage() {
       const val = device.status;
       const rawDate = device.updated_at;
 
-      // Logika penentuan dasar Online
       const isStatusActive =
         val === true ||
         val === 1 ||
@@ -97,27 +99,27 @@ export function DevicePage() {
         String(val).toLowerCase().trim() === "online" ||
         String(val).toLowerCase().trim() === "active";
 
-      // Logika timeout 2 jam (sesuai kolom status sebelumnya)
+      // 💡 Sinkronisasi Toleransi Batas Waktu 5 Menit & Proteksi Data Strip ("-")
       let isTimedOut = false;
-      if (rawDate) {
+      if (rawDate && String(rawDate).trim() !== "-") {
         const lastUpdateTime = new Date(rawDate).getTime();
         const currentTime = new Date().getTime();
-        const durationInHours =
-          (currentTime - lastUpdateTime) / (1000 * 60 * 60);
-        if (durationInHours > 2) {
+        const durationInMinutes = (currentTime - lastUpdateTime) / (1000 * 60);
+        if (durationInMinutes > 5) {
           isTimedOut = true;
         }
+      } else {
+        isTimedOut = true;
       }
 
       const isDeviceOnline = isStatusActive && !isTimedOut;
-
       return statusFilter === "online" ? isDeviceOnline : !isDeviceOnline;
     });
   }, [devices, statusFilter]);
 
   const table = useReactTable({
     columns,
-    data: filteredDevices, // 💡 3. Gunakan data yang sudah difilter
+    data: filteredDevices,
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
@@ -149,6 +151,18 @@ export function DevicePage() {
         onClose={() => setIsOpenForm(false)}
         onSuccess={fetchDevices}
       />
+
+      {/* 💡 Sisipkan Komponen EditDeviceModal di Sini */}
+      <EditDeviceModal
+        isOpen={isOpenEditForm}
+        onClose={() => {
+          setIsOpenEditForm(false);
+          setSelectedDeviceForEdit(null);
+        }}
+        onSuccess={fetchDevices}
+        deviceData={selectedDeviceForEdit}
+      />
+
       <div className="py-6 w-full space-y-6 antialiased bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 text-left">
         <Card
           animate={false}
@@ -159,7 +173,6 @@ export function DevicePage() {
               <IconDeviceDesktop size={16} /> REGISTERED NODES
             </CardTitle>
             <div className="flex gap-2 flex-wrap">
-              {/* 💡 4. TOMBOL FILTER STATUS BARU */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
@@ -251,7 +264,17 @@ export function DevicePage() {
                 </p>
               </div>
             ) : (
-              <DeviceTable table={table} />
+              // 💡 Kirimkan fungsi callback pemicu modal dan refresh ke dalam meta TanStack table
+              <DeviceTable
+                table={table}
+                meta={{
+                  refreshData: fetchDevices,
+                  openEditModal: (device: Device) => {
+                    setSelectedDeviceForEdit(device);
+                    setIsOpenEditForm(true);
+                  },
+                }}
+              />
             )}
           </CardContent>
 

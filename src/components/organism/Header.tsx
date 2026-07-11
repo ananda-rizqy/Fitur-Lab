@@ -9,16 +9,17 @@ interface HeaderProps {
   onLogout?: () => void;
 }
 
-interface Student {
+interface User {
   id: number;
   name: string;
   nim_nip: string;
   kelas?: string;
+  role: string;
 }
 
 export function Header({ title, description, onLogout }: HeaderProps) {
   const [isDark, setIsDark] = React.useState(false);
-  const [user, setUser] = useState<Student | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   // const handleLogOutClick = () => {
   //   Swal.fire({
@@ -107,13 +108,13 @@ export function Header({ title, description, onLogout }: HeaderProps) {
 
       {/* right section */}
       <div className="flex items-center gap-4">
-        <Button variant="brutal" size="icon" onClick={toggleTheme}>
+        {/* <Button variant="brutal" size="icon" onClick={toggleTheme}>
           {isDark ? (
             <Sun size={14} className="text-amber-400" />
           ) : (
             <Moon size={14} />
           )}
-        </Button>
+        </Button> */}
 
         <div className="w-0.5 h-7 bg-zinc-200 dark:bg-zinc-800 mx-1 hidden sm:block" />
 
@@ -123,7 +124,7 @@ export function Header({ title, description, onLogout }: HeaderProps) {
               {user?.name || "Guest User"}
             </div>
             <div className="font-mono text-[9px] font-black text-zinc-400 dark:text-zinc-500 tracking-wider mt-0.5">
-              NIM. {user?.nim_nip || "0.00.00.0.00"}
+              {user?.role === 'mahasiswa' ? 'NIM' : 'NIP'}. {user?.nim_nip || "0.00.00.0.00"}
             </div>
           </div>
         </div>
