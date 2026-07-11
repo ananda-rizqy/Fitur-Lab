@@ -1,3 +1,4 @@
+import api from "@/services/api";
 import { type ColumnDef } from "@tanstack/react-table";
 
 interface Device {
@@ -35,10 +36,7 @@ export const columns: ColumnDef<Device>[] = [
       </span>
     ),
   },
-  {
-    accessorKey: "tipe_device",
-    header: "Type",
-  },
+
   {
     header: "RSSI (1/2/3)",
     cell: ({ row }) => {
@@ -61,56 +59,6 @@ export const columns: ColumnDef<Device>[] = [
       return (
         <span className="font-mono font-black text-zinc-800 dark:text-zinc-200">
           {posX} , {posY}
-        </span>
-      );
-    },
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => {
-      const val = row.original.status;
-      const rawDate = row.original.updated_at;
-
-      // 1. Cek status dasar dari data (Online / Active / 1)
-      const isStatusActive =
-        val === true ||
-        val === 1 ||
-        val === "1" ||
-        String(val).toLowerCase().trim() === "online" ||
-        String(val).toLowerCase().trim() === "active";
-
-      // 2. 💡 Logika Batas Waktu (Jeda Maksimal 5 Menit)
-      let isTimedOut = false;
-
-      if (rawDate && String(rawDate).trim() !== "-") {
-        const lastUpdateTime = new Date(rawDate).getTime();
-        const currentTime = new Date().getTime();
-
-        const durationInMilliseconds = currentTime - lastUpdateTime;
-        const durationInMinutes = durationInMilliseconds / (1000 * 60);
-
-        // Jika jeda waktu update lebih dari 5 menit, set menjadi True (Timed Out)
-        if (durationInMinutes > 5) {
-          isTimedOut = true;
-        }
-      } else {
-        // Jika tidak ada data waktu (null/undefined/"-"), otomatis dianggap Timed Out
-        isTimedOut = true;
-      }
-
-      // 3. Device benar-benar aktif HANYA JIKA statusnya active DAN belum melewati batas waktu
-      const isActive = isStatusActive && !isTimedOut;
-
-      return (
-        <span
-          className={`font-mono font-black text-[11px] px-2.5 py-0.5 rounded-none border-2 uppercase tracking-wide inline-block ${
-            isActive
-              ? "bg-white dark:bg-zinc-900 text-emerald-600 border-zinc-950 dark:border-emerald-800"
-              : "bg-white dark:bg-zinc-900 text-amber-600 border-zinc-950 dark:border-amber-800"
-          }`}
-        >
-          {isActive ? "Online" : "Offline"}
         </span>
       );
     },

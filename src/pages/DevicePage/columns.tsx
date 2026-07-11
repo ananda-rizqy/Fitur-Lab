@@ -1,4 +1,5 @@
 import { type ColumnDef } from "@tanstack/react-table";
+import api from "../../services/api"; // Pastikan path import instance api axios Anda benar
 
 interface Device {
   id: number;
@@ -40,7 +41,7 @@ export const columns: ColumnDef<Device>[] = [
     header: "Type",
   },
   {
-    header: "RSSI (1/2/3)",
+    header: "RSSI (1/2/3/4)",
     cell: ({ row }) => {
       const r1 = row.original.rssi ?? "-";
       const r2 = row.original.rssi2 ?? "-";
@@ -72,7 +73,6 @@ export const columns: ColumnDef<Device>[] = [
       const val = row.original.status;
       const rawDate = row.original.updated_at;
 
-      // 1. Cek status dasar dari data (Online / Active / 1)
       const isStatusActive =
         val === true ||
         val === 1 ||
@@ -80,7 +80,6 @@ export const columns: ColumnDef<Device>[] = [
         String(val).toLowerCase().trim() === "online" ||
         String(val).toLowerCase().trim() === "active";
 
-      // 2. 💡 Logika Batas Waktu (Jeda Maksimal 5 Menit)
       let isTimedOut = false;
 
       if (rawDate && String(rawDate).trim() !== "-") {
@@ -90,16 +89,13 @@ export const columns: ColumnDef<Device>[] = [
         const durationInMilliseconds = currentTime - lastUpdateTime;
         const durationInMinutes = durationInMilliseconds / (1000 * 60);
 
-        // Jika jeda waktu update lebih dari 5 menit, set menjadi True (Timed Out)
         if (durationInMinutes > 5) {
           isTimedOut = true;
         }
       } else {
-        // Jika tidak ada data waktu (null/undefined/"-"), otomatis dianggap Timed Out
         isTimedOut = true;
       }
 
-      // 3. Device benar-benar aktif HANYA JIKA statusnya active DAN belum melewati batas waktu
       const isActive = isStatusActive && !isTimedOut;
 
       return (
@@ -115,7 +111,6 @@ export const columns: ColumnDef<Device>[] = [
       );
     },
   },
-
   {
     accessorKey: "updated_at",
     header: "Last Update",
@@ -132,6 +127,55 @@ export const columns: ColumnDef<Device>[] = [
             minute: "2-digit",
           })}
         </span>
+      );
+    },
+  },
+  // 💡 KOLOM AKSI EDIT DAN HAPUS REAL BERKONEKSI KE METATABLE REACT
+  {
+    id: "actions",
+    header: "Actions",
+    cell: ({ row, table }) => {
+      const device = row.original;
+      const meta = table.options.meta as any;
+
+      const handleDelete = async () => {
+        const confirmDelete = window.confirm(
+          `Apakah Anda yakin ingin menghapus perangkat "${device.device_names}" beserta alamat MAC ${device.mac_devices} dari sistem?`,
+        );
+        if (!confirmDelete) return;
+
+        try {
+          // Panggil API endpoint DELETE /api/devices/{id} ke Laravel Controller Anda
+          await api.delete(`/devices/${device.id}`);
+          alert("Perangkat berhasil dihapus dari sistem.");
+          if (meta && meta.refreshData) {
+            meta.refreshData(); // Memicu penarikan data ulang otomatis di DevicePage
+          }
+        } catch (err) {
+          console.error("Gagal menghapus device:", err);
+          alert("Terjadi kesalahan saat menghapus data.");
+        }
+      };
+
+      return (
+        <div className="flex gap-2 font-mono">
+          <button
+            onClick={() => {
+              if (meta && meta.openEditModal) {
+                meta.openEditModal(device);
+              }
+            }}
+            className="px-2 py-1 text-[11px] border-2 border-zinc-950 dark:border-zinc-700 font-bold bg-white dark:bg-zinc-900 text-blue-600 hover:bg-zinc-50 uppercase tracking-tight"
+          >
+            EDIT
+          </button>
+          <button
+            onClick={handleDelete}
+            className="px-2 py-1 text-[11px] border-2 border-zinc-950 dark:border-zinc-700 font-bold bg-white dark:bg-zinc-900 text-red-600 hover:bg-zinc-50 uppercase tracking-tight"
+          >
+            DEL
+          </button>
+        </div>
       );
     },
   },

@@ -1,10 +1,10 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { MapLab } from "../../components/organism/Map/Map";
 import { MapSidebar } from "../../components/organism/MapSidebar";
 import type { LatLngTuple } from "leaflet";
 import { Radio, AlertCircle } from "lucide-react";
 import api from "../../services/api";
-import echo from "../../lib/echo";
+// import echo from "../../lib/echo";
 import { PageLayout } from "../../layouts/PageLayout";
 import { Button } from "../../components/ui/button";
 
@@ -15,6 +15,7 @@ export function MapLabPage() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  // 1. Fungsi penarikan inisialisasi awal data node perangkat
   const fetchDevices = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -33,41 +34,38 @@ export function MapLabPage() {
     fetchDevices();
   }, [fetchDevices]);
 
-  useEffect(() => {
-    const channel = echo.channel("device-channel");
+  // 2. 💡 PROSES FILTER: Hanya loloskan perangkat yang benar-benar ONLINE (Toleransi 5 Menit)
+  const onlyOnlineDevices = useMemo(() => {
+    return devices.filter((device) => {
+      const val = device.status;
+      const rawDate = device.updated_at;
 
-    channel.listen(".device.updated", (e: any) => {
-      if (!e.devices) return;
+      // Logika dasar keaktifan status
+      const isStatusActive =
+        val === true ||
+        val === 1 ||
+        val === "1" ||
+        String(val).toLowerCase().trim() === "online" ||
+        String(val).toLowerCase().trim() === "active";
 
-      setDevices((prev) => {
-        const updated = [...prev];
+      // Logika pembatasan waktu timeout 5 menit
+      let isTimedOut = false;
+      if (rawDate && String(rawDate).trim() !== "-") {
+        const lastUpdateTime = new Date(rawDate).getTime();
+        const currentTime = new Date().getTime();
+        const durationInMinutes = (currentTime - lastUpdateTime) / (1000 * 60);
 
-        e.devices.forEach((incoming: any) => {
-          const index = updated.findIndex(
-            (d) => d.mac_devices === incoming.mac_devices,
-          );
+        if (durationInMinutes > 5) {
+          isTimedOut = true;
+        }
+      } else {
+        // Jika tidak ada catatan waktu update, otomatis anggap offline
+        isTimedOut = true;
+      }
 
-          const formattedNode = {
-            ...incoming,
-            x: Number(incoming.x),
-            y: Number(incoming.y),
-          };
-
-          if (index !== -1) {
-            updated[index] = { ...updated[index], ...formattedNode };
-          } else {
-            updated.unshift(formattedNode);
-          }
-        });
-
-        return updated;
-      });
+      return isStatusActive && !isTimedOut;
     });
-
-    return () => {
-      echo.leave("device-channel");
-    };
-  }, []);
+  }, [devices]);
 
   const handleSelectDevice = useCallback((device: any) => {
     setActiveDeviceId(device.id);
@@ -88,7 +86,9 @@ export function MapLabPage() {
                 size={12}
                 className="text-emerald-500 animate-pulse shrink-0"
               />
-              <span>Realtime Feed Active</span>
+              <span>
+                Realtime Feed Active ({onlyOnlineDevices.length} Nodes)
+              </span>
             </div>
           </div>
         </div>
@@ -117,16 +117,17 @@ export function MapLabPage() {
             </div>
           )}
 
+          {/* 💡 Perbaikan: Kirim data 'onlyOnlineDevices' ke Sidebar */}
           <div className="w-full lg:w-[340px] h-2/5 lg:h-full border-b-2 lg:border-b-0 lg:border-r-2 border-zinc-200 dark:border-zinc-800 overflow-y-auto shrink-0">
             <MapSidebar
-              devices={devices}
+              devices={onlyOnlineDevices}
               activeDeviceId={activeDeviceId}
               onSelectDevice={handleSelectDevice}
             />
           </div>
 
           <div className="flex-1 h-3/5 lg:h-full relative bg-zinc-100 dark:bg-zinc-950">
-            <MapLab devices={devices} focusTarget={focusTarget} />
+            <MapLab devices={onlyOnlineDevices} focusTarget={focusTarget} />
           </div>
         </div>
       </div>
