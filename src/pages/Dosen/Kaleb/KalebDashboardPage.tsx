@@ -4,7 +4,7 @@ import { TabelManajemenTendik } from "../../../components/organism/TabelManajeme
 export const KalebDashboard = () => {
   return (
     <PageLayout 
-      pageTitle="Manajemen Kaleb" 
+      pageTitle="Manajemen Kalab" 
       pageDescription="Atur penugasan gedung untuk staf laboratorium.">
       <div className="py-6 w-full">
         <TabelManajemenTendik />

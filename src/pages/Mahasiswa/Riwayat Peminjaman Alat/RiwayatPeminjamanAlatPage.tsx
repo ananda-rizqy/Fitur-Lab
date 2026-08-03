@@ -60,7 +60,7 @@ export function RiwayatPeminjamanAlatPage() {
 
     // 2. Filter Tanggal Presisi
     // Kita pastikan mengambil tanggal dalam format YYYY-MM-DD dari API
-    const rawDate = item.tanggal_pinjam || item.created_at;
+    const rawDate = item.waktu_pinjam || item.created_at;
     const matchesDate = (() => {
       if (!startDate && !endDate) return true;
       if (!rawDate) return false;

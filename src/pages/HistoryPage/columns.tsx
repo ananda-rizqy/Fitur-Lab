@@ -38,7 +38,7 @@ export const columns: ColumnDef<Device>[] = [
   },
 
   {
-    header: "RSSI (1/2/3)",
+    header: "RSSI (1/2/3/4)",
     cell: ({ row }) => {
       const r1 = row.original.rssi ?? "-";
       const r2 = row.original.rssi2 ?? "-";

@@ -17,13 +17,14 @@ import {
   IconCalendarTime,
   IconTool,
   IconUser,
-  IconUserCheck,
+  IconStack2,
+  IconSquareCheck,
+  IconUsers,
 } from "@tabler/icons-react";
  
 import {
   Sidebar,
   SidebarContent,
-  SidebarHeader,
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenuButton,
@@ -39,7 +40,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../../ui/dropdown-menu.tsx";
-import { ShuffleIcon } from "lucide-react";
 
 interface UserData {
   id: number;
@@ -49,10 +49,17 @@ interface UserData {
   name?: string;
   role?: string;
   nim_nip?: string;
+  jabatan?: string | null; // 🌟 Tambahkan properti jabatan agar terbaca oleh TypeScript
 } 
 
 const items = [
   { title: "Home", url: "/dashboard", icon: IconHome },
+  {
+    title: "Manajemen Pengguna",
+    url: "/admin/users",
+    icon: IconUsers,
+    roles: ["admin"],
+  },
   {
     title: "Device Management",
     url: "/device-management",
@@ -60,7 +67,12 @@ const items = [
     roles: ["tendik"],
   },
   { title: "Map", url: "/map", icon: IconMap },
-  { title: "History", url: "/history", icon: IconHistory },
+  {
+    title: "History",
+    url: "/history",
+    icon: IconHistory,
+    roles: ["tendik", "dosen"],
+  },
   {
     title: "Class",
     url: "/class",
@@ -72,6 +84,12 @@ const items = [
     url: "/ketersediaan-alat",
     icon: IconBoxSeam,
     roles: ["tendik", "mahasiswa", "dosen"],
+  },
+  {
+    title: "Ketersediaan Bahan",
+    url: "/bahan",
+    icon: IconStack2,
+    roles: ["tendik", "dosen", "mahasiswa"],
   },
   {
     title: "Laporan Penggunaan Aset",
@@ -89,6 +107,12 @@ const items = [
     title: "Persetujuan Pinjam",
     url: "/persetujuan-pinjam",
     icon: IconFileCheck,
+    roles: ["tendik"],
+  },
+  {
+    title: "Verifikasi Pengembalian",
+    url: "/tendik/verifikasi-pengembalian",
+    icon: IconSquareCheck,
     roles: ["tendik"],
   },
   {
@@ -159,11 +183,6 @@ const items = [
   },
 ];
 
-const nipKaleb = [
-  "197203292000031001",
-  "198809142022031006",
-];
-
 export function MySidebar() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -184,20 +203,30 @@ export function MySidebar() {
   }, [location.pathname]);
 
   const filteredItems = items.filter((item) => {
-  if (!item.roles) return true;
+    if (!item.roles) return true;
 
-  const hasRole = item.roles.includes(
-    (userData?.role || "").toLowerCase()
-  );
+    const userRole = (userData?.role || "").toLowerCase();
+    const hasRole = item.roles.includes(userRole);
 
-  if (!hasRole) return false;
+    if (!hasRole) return false;
 
-  if (item.url === "/manajemen-tendik") {
-    return nipKaleb.includes(userData?.nim_nip || "");
-  }
+    // 🌟 1. Akses Manajemen Tendik: Hanya untuk Admin atau Dosen dengan Jabatan 'kalab'
+    if (item.url === "/manajemen-tendik") {
+      if (userRole === "admin") return true;
+      return userRole === "dosen" && userData?.jabatan === "kalab";
+    }
 
-  return true;
-});
+    // 🌟 2. Akses Laporan Aset: Untuk Admin, Tendik, atau Dosen yang punya jabatan (kalab/kaprodi)
+    if (item.url === "/laporan-aset") {
+      if (userRole === "admin" || userRole === "tendik") return true;
+      if (userRole === "dosen") {
+        return userData?.jabatan === "kalab" || userData?.jabatan === "kaprodi";
+      }
+      return false;
+    }
+
+    return true;
+  });
 
   const mainItems = filteredItems.filter((i) =>
     ["Home", "Map", "History", "Class"].includes(i.title),
@@ -339,7 +368,7 @@ export function MySidebar() {
                       {userData?.name || "User"}
                     </span>
                     <span className="truncate text-[10px] font-bold text-zinc-400 dark:text-zinc-500">
-                      {userData?.kelas}
+                      {userData?.kelas || userData?.role}
                     </span>
                   </div>
                   <IconChevronUp className="ml-auto size-4 text-zinc-400 group-data-[collapsible=icon]:hidden shrink-0" />
@@ -357,8 +386,8 @@ export function MySidebar() {
                     <p className="text-sm font-black text-zinc-900 dark:text-zinc-100">
                       {userData?.name}
                     </p>
-                    <p className="text-[10px] text-zinc-400 dark:text-zinc-500 font-bold">
-                      {userData?.role}
+                    <p className="text-[10px] text-zinc-400 dark:text-zinc-500 font-bold uppercase">
+                      {userData?.role} {userData?.jabatan ? `(${userData.jabatan})` : ""}
                     </p>
                   </div>
                 </DropdownMenuLabel>
@@ -384,3 +413,5 @@ export function MySidebar() {
     </Sidebar>
   );
 }
+
+export default MySidebar;

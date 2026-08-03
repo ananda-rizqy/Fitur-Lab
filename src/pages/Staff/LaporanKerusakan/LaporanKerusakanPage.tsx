@@ -63,11 +63,17 @@ export function LaporanKerusakanPage() {
 
   const filteredData = useMemo(() => {
     return data.filter((item) => {
+      // 1. Filter Tanggal (Pencocokan Tanggal Spesifik)
       if (startDate) {
-        const rawDate = item.waktu_kembali || item.tanggal_kembali;
+        // 🌟 Perbaiki variabel yang berulang, beri fallback ke waktu_pinjam atau created_at
+        const rawDate = item.waktu_selesai_aktual || item.waktu_pinjam || item.created_at;
+        
         if (!rawDate) return false;
+        
         try {
-          const itemDateString = rawDate.split("T")[0];
+          // 🌟 Gunakan substring(0, 10) agar aman memotong format "YYYY-MM-DD HH:MM:SS"
+          const itemDateString = String(rawDate).substring(0, 10);
+          
           if (itemDateString !== startDate) return false;
         } catch (e) {
           return false;

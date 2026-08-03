@@ -9,6 +9,7 @@ import { DevicePage } from "./pages/DevicePage";
 import { AppLayout } from "./layouts/AppLayout/layouts";
 import { HistoryPage } from "./pages/HistoryPage";
 import { AlatTable } from "./pages/ManajemenPage/ManajemenInventoryPage";
+import { BahanManagement } from "./components/BahanManagement"; 
 import { AuthSuccess } from "./components/organism/FormLogin/AuthSuccess";
 import GuestRoute from "./routes/GuestRoute";
 import ProtectedRoute from "./routes/ProtectedRoute";
@@ -20,6 +21,8 @@ import { RiwayatPeminjamanRuangPage } from "./pages/Staff/RiwayatPeminjamanRuang
 import { LaporanKerusakanPage } from "./pages/Staff/LaporanKerusakan/LaporanKerusakanPage";
 import { PersetujuanPinjamPage } from "./pages/Staff/PersetujuanPinjam/PersetujuanPinjamPage";
 import { KetersediaanAlatPage } from "./pages/Staff/KetersediaanAlat/KetersediaanAlatPage";
+import VerifikasiPengembalianPage from "./pages/Staff/VerifikasiPeminjaman/VerifikasiPengembalianPage";
+
 import PeminjamanPage from "./pages/Mahasiswa/Peminjaman/PeminjamanPage";
 import { PenggunaanRuangLabPage } from "./pages/Mahasiswa/PenggunaanRuangLab/PenggunaanRuangLabPage";
 import { RiwayatPeminjamanAlatPage } from "./pages/Mahasiswa/Riwayat Peminjaman Alat/RiwayatPeminjamanAlatPage";
@@ -29,8 +32,9 @@ import PengembalianAlatPage from "./pages/Mahasiswa/Pengembalian/PengembalianAla
 import { PemantauanRuangPage } from "./pages/Dosen/PemantauanRuang/PemantauanRuangPage";
 import { PemantauanAlatPage } from "./pages/Dosen/PemantauanAlat/PemantauanAlatPage";
 import { ClassPage } from "./pages/ClassPage/ClassPage";
-import { LaporanAsetPage } from "./pages/Laporan/LaporanAsetPage";
+import LaporanAsetPage from "./pages/Laporan/LaporanAsetPage";
 import { KalebDashboard } from "./pages/Dosen/Kaleb/KalebDashboardPage"; 
+import { ManajemenUserPage } from "./components/molecules/ManajemenUserPage";
 
 function App() {
   return (
@@ -50,9 +54,7 @@ function App() {
 
         <Route
           element={
-            // <ProtectedRoute>
             <AppLayout />
-            // </ProtectedRoute>
           }
         >
           <Route path="/dashboard" element={<Dashboard />} />
@@ -61,6 +63,22 @@ function App() {
           <Route path="/device-management" element={<DevicePage />} />
           <Route path="/history" element={<HistoryPage />} />
           <Route path="/alat" element={<AlatTable />} />
+          <Route path="/admin/users" element={<ManajemenUserPage />} />
+          
+          <Route 
+            path="/bahan" 
+            element={
+              <BahanManagement 
+                userRole={
+                  localStorage.getItem("auth") 
+                    ? JSON.parse(localStorage.getItem("auth")!).user?.role?.toLowerCase() || "mahasiswa" 
+                    : "mahasiswa"
+                } 
+              />
+            } 
+          />
+
+          {/* Rute Staff / Tendik */}
           <Route
             path="staff/riwayat-peminjaman-alat"
             element={<RiwayatPeminjamanAlat />}
@@ -75,12 +93,17 @@ function App() {
             element={<PersetujuanPinjamPage />}
           />
           <Route path="/ketersediaan-alat" element={<KetersediaanAlatPage />} />
+          
+          {/* 🌟 RUTE BARU: VERIFIKASI PENGEMBALIAN TENDIK */}
+          <Route 
+            path="/tendik/verifikasi-pengembalian" 
+            element={<VerifikasiPengembalianPage />} 
+          />
 
           <Route path="/class" element={<ClassPage />} />
-
           <Route path="*" element={<ProtectedNotFoundPage />} />
 
-          {/* mahasiswa */}
+          {/* Mahasiswa */}
           <Route path="/peminjaman-aktif" element={<PeminjamanPage />} />
           <Route path="/pengembalian-alat" element={<PengembalianAlatPage />} />
           <Route
@@ -89,15 +112,15 @@ function App() {
           />
           <Route
             path="/riwayat-peminjaman-alat"
-            element={<RiwayatPeminjamanAlatPage />}
+          element={<RiwayatPeminjamanAlatPage />}
           />
           <Route
             path="/riwayat-penggunaan-ruang"
-            element={<RiwayatPenggunaanRuangPage />}
+          element={<RiwayatPenggunaanRuangPage />}
           />
           <Route
             path="/pengajuan-pinjam-alat"
-            element={<PengajuanPeminjamanPage />}
+          element={<PengajuanPeminjamanPage />}
           />
 
           {/* Rute Dosen */}

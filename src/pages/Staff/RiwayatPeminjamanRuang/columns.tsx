@@ -43,7 +43,7 @@ export const getColumns = (
             {row.original.nama_mahasiswa || "N/A"}
           </div>
           <div className="text-[10px] font-mono text-zinc-400 dark:text-zinc-500 font-bold tracking-wide mt-0.5">
-            NIM: {row.original.nim_mahasiswa || "---"}
+            NIM: {row.original.nim_nip || "---"}
           </div>
           <div className="text-[10px] font-mono text-zinc-400 dark:text-zinc-500 font-bold tracking-wide mt-0.5">
             KELAS: {row.original.kelas_mahasiswa || "N/A"}

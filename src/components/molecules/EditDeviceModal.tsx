@@ -26,7 +26,6 @@ export function EditDeviceModal({
   const [tipeDevice, setTipeDevice] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Set nilai form ketika data device terpilih masuk
   useEffect(() => {
     if (deviceData) {
       setDeviceName(deviceData.device_names);

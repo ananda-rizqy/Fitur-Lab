@@ -3,7 +3,9 @@ import { CartNonAssetRow } from "../molecules/CartNonAssetRow";
 
 interface CartItem {
   id: number;
-  nama_alat: string;
+  tipe_item?: "alat" | "bahan"; // 👈 Ditambahkan untuk membedakan alat dan bahan
+  nama_alat?: string;
+  nama_bahan?: string;
   letak: string;
   jumlah: number;
   kode_tag_list?: string[];
@@ -14,7 +16,7 @@ interface CartItem {
 
 interface CartItemListProps {
   cart: CartItem[];
-  onRemove: (id: number) => void;
+  onRemove: (id: number, tipeItem?: string) => void; // 👈 Mendukung tipeItem agar penghapusan akurat
   onUpdateTags: (id: number, newTags: string[]) => void;
   onUpdateQty: (id: number, newQty: number) => void;
 }
@@ -25,28 +27,40 @@ export function CartItemList({
   onUpdateTags,
   onUpdateQty,
 }: CartItemListProps) {
+  if (!cart || cart.length === 0) {
+    return (
+      <div className="py-8 text-center font-mono text-xs text-zinc-500 uppercase">
+        Keranjang peminjaman masih kosong.
+      </div>
+    );
+  }
+
   return (
-    <div className="max-h-[68vh] overflow-y-auto pr-1 space-y-5 custom-scrollbar scrollbar-none">
+    <div className="max-h-[68vh] overflow-y-auto pr-1 space-y-5 custom-scrollbar scrollbar-none text-left">
       {cart.map((item) => {
-        // 🌟 KUNCI UTAMA: Validasi ketat string "1" atau boolean true sebagai penentu aset
-        const isAsetObj = item.is_aset === true || item.is_aset === "1";
+        // Jika item adalah bahan, arahkan ke komponen non-aset atau render penanganan khusus bahan
+        const isBahan = item.tipe_item === "bahan";
+        const isAsetObj = !isBahan && (item.is_aset === true || item.is_aset === "1");
+        
+        // Buat key unik agar tidak bentrok ID antara alat dan bahan
+        const uniqueKey = `${item.tipe_item || "alat"}-${item.id}`;
 
         return isAsetObj ? (
           <CartAssetRow
-            key={item.id}
-            item={item as any} // Cast as any jika interface internal CartAssetRow masih kaku boolean
-            onRemove={() => onRemove(item.id)}
+            key={uniqueKey}
+            item={item as any} 
+            onRemove={() => onRemove(item.id, item.tipe_item)}
             onUpdateTags={(newTags) => onUpdateTags(item.id, newTags)}
           />
         ) : (
           <CartNonAssetRow
-            key={item.id}
+            key={uniqueKey}
             item={item as any} 
-            onRemove={() => onRemove(item.id)}
+            onRemove={() => onRemove(item.id, item.tipe_item)}
             onUpdateQty={(newQty) => onUpdateQty(item.id, newQty)}
           />
         );
       })}
     </div>
   );
-} 
+}

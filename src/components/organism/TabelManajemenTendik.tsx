@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Swal from 'sweetalert2';
 import api from "../../services/api";
 
 export const TabelManajemenTendik = () => {
@@ -14,9 +15,12 @@ export const TabelManajemenTendik = () => {
 
   const fetchBuildings = async () => {
     try {
-      const res = await api.get("/ruangan-list"); 
-      setAllBuildings(res.data);
-    } catch (err) { console.error("Gagal mengambil daftar gedung", err); }
+      const res = await api.get("/gedungs-list"); 
+      // 🌟 Ambil bagian .data karena struktur dari Laravel dibungkus dalam key 'data'
+      setAllBuildings(res.data.data || res.data);
+    } catch (err) { 
+      console.error("Gagal mengambil daftar gedung", err); 
+    }
   };
 
   const fetchTendiks = async () => {
@@ -28,10 +32,40 @@ export const TabelManajemenTendik = () => {
 
   const handleAssign = async () => {
     if (!selectedTendik) return;
-    await api.post(`/kaleb/assign-tendik/${selectedTendik.id}`, { gedung_id: selectedBuildings.join(',') });
-    alert('Penugasan diperbarui!');
-    fetchTendiks();
-    setSelectedTendik(null);
+    try {
+      await api.post(`/kaleb/assign-tendik/${selectedTendik.id}`, { gedung_id: selectedBuildings.join(',') });
+      
+      // 🌟 Menggunakan Swal untuk alert sukses yang elegan
+      Swal.fire({
+        title: "BERHASIL!",
+        text: "Penugasan gedung berhasil diperbarui.",
+        icon: "success",
+        confirmButtonColor: "#000000",
+        customClass: {
+          popup: "rounded-none border-4 border-zinc-950 font-mono",
+          title: "font-black uppercase tracking-wide text-zinc-900",
+          confirmButton: "rounded-none font-mono font-black uppercase bg-black text-white px-6 py-2"
+        }
+      });
+
+      fetchTendiks();
+      setSelectedTendik(null);
+    } catch (err: any) {
+      console.error("Gagal memperbarui penugasan", err);
+      
+      // 🌟 Alert error jika gagal
+      Swal.fire({
+        title: "GAGAL!",
+        text: err.response?.data?.message || "Gagal memperbarui penugasan.",
+        icon: "error",
+        confirmButtonColor: "#b91c1c",
+        customClass: {
+          popup: "rounded-none border-4 border-red-700 font-mono",
+          title: "font-black uppercase tracking-wide text-red-700",
+          confirmButton: "rounded-none font-mono font-black uppercase bg-red-700 text-white px-6 py-2"
+        }
+      });
+    }
   };
 
   return (
@@ -76,22 +110,33 @@ export const TabelManajemenTendik = () => {
           <div className="bg-white p-5 border-4 border-zinc-950 w-full max-w-sm shadow-[8px_8px_0px_0px_rgba(9,9,11,1)]">
             <h2 className="font-mono font-bold mb-4 text-sm truncate">Gedung: {selectedTendik.name}</h2>
             
-            <div className="max-h-[300px] overflow-y-auto mb-6">
-              {[1, 2, 3, 4].map(id => (
-                <label key={id} className="flex items-center mb-2 font-mono text-xs cursor-pointer p-2 border border-zinc-200">
-                  <input type="checkbox" checked={selectedBuildings.includes(id.toString())}
-                    onChange={(e) => e.target.checked 
-                      ? setSelectedBuildings([...selectedBuildings, id.toString()]) 
-                      : setSelectedBuildings(selectedBuildings.filter(b => b !== id.toString()))
-                    } className="mr-3" />
-                  Gedung {id}
-                </label>
-              ))}
+            <div className="max-h-[300px] overflow-y-auto mb-6 space-y-2">
+              {/* 🌟 Gunakan allBuildings secara dinamis */}
+              {allBuildings.map(building => {
+                const buildingIdStr = building.id.toString();
+                // 🌟 Mencari properti teks nama gedung secara dinamis agar tidak kosong
+                const buildingName = building.nama_gedung || building.nama_ruangan || building.name || `Gedung ${building.id}`;
+                
+                return (
+                  <label key={building.id} className="flex items-center font-mono text-xs cursor-pointer p-2 border border-zinc-200 hover:bg-zinc-50">
+                    <input 
+                      type="checkbox" 
+                      checked={selectedBuildings.includes(buildingIdStr)}
+                      onChange={(e) => e.target.checked 
+                        ? setSelectedBuildings([...selectedBuildings, buildingIdStr]) 
+                        : setSelectedBuildings(selectedBuildings.filter(b => b !== buildingIdStr))
+                      } 
+                      className="mr-3 w-4 h-4 accent-black" 
+                    />
+                    <span className="font-bold text-zinc-900">{buildingName}</span>
+                  </label>
+                );
+              })}
             </div>
             
             <div className="flex gap-2">
-              <button onClick={handleAssign} className="flex-1 bg-green-500 text-white py-2 font-mono text-xs border-2 border-zinc-950">Simpan</button>
-              <button onClick={() => setSelectedTendik(null)} className="flex-1 bg-zinc-200 py-2 font-mono text-xs border-2 border-zinc-950">Batal</button>
+              <button onClick={handleAssign} className="flex-1 bg-green-500 text-white py-2 font-mono text-xs border-2 border-zinc-950 font-bold uppercase hover:bg-green-600">Simpan</button>
+              <button onClick={() => setSelectedTendik(null)} className="flex-1 bg-zinc-200 py-2 font-mono text-xs border-2 border-zinc-950 font-bold uppercase hover:bg-zinc-300">Batal</button>
             </div>
           </div>
         </div>

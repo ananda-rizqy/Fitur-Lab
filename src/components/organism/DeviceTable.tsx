@@ -8,7 +8,30 @@ import {
 } from "../../components/ui/table";
 import { flexRender } from "@tanstack/react-table";
 
-export function DeviceTable({ table, columns }: any) {
+export function DeviceTable({ table, columns, meta }: any) {
+  if (meta && table?.options) {
+    table.options.meta = meta;
+  }
+
+  if (!table || typeof table.getRowModel !== "function") {
+    return (
+      <Table className="border-2 rounded-2xl">
+        <TableBody>
+          <TableRow>
+            <TableCell
+              colSpan={columns?.length || 1}
+              className="text-center py-12 font-bold text-zinc-400 font-mono"
+            >
+              MEMPERBARUI STRUKTUR DATA...
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+    );
+  }
+
+  const rows = table.getRowModel()?.rows || [];
+
   return (
     <Table className="border-2 rounded-2xl">
       <TableHeader>
@@ -18,7 +41,7 @@ export function DeviceTable({ table, columns }: any) {
               <TableHead key={header.id}>
                 {flexRender(
                   header.column.columnDef.header,
-                  header.getContext()
+                  header.getContext(),
                 )}
               </TableHead>
             ))}
@@ -27,8 +50,8 @@ export function DeviceTable({ table, columns }: any) {
       </TableHeader>
 
       <TableBody>
-        {table.getRowModel().rows.length ? (
-          table.getRowModel().rows.map((row: any) => (
+        {rows.length > 0 ? (
+          rows.map((row: any) => (
             <TableRow key={row.id}>
               {row.getVisibleCells().map((cell: any) => (
                 <TableCell key={cell.id}>
@@ -39,7 +62,12 @@ export function DeviceTable({ table, columns }: any) {
           ))
         ) : (
           <TableRow>
-            <TableCell colSpan={columns.length}>No result…</TableCell>
+            <TableCell
+              colSpan={columns?.length || 1}
+              className="text-center py-12 font-bold text-zinc-400 font-mono uppercase tracking-widest"
+            >
+              No result…
+            </TableCell>
           </TableRow>
         )}
       </TableBody>

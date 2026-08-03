@@ -33,53 +33,53 @@ import { LoanPagination } from "../../../components/organism/LoanPagination";
 
 const LAB_GROUPS = [
   {
-    name: "Gedung Elektronika",
+    name: "Laboratorium TK Barat",
     icon: Activity,
     color: "from-zinc-700 to-zinc-900",
   },
   {
-    name: "Gedung Telekomunikasi",
+    name: "Laboratorium TK Timur",
     icon: Network,
     color: "from-zinc-800 to-black",
   },
   {
-    name: "Gedung UPT Bahasa",
+    name: "Laboratorium TK IoT",
     icon: Cpu,
     color: "from-zinc-600 to-zinc-800",
   },
   {
-    name: "Gedung Magister Terapan",
+    name: "Ruang Broadcast",
     icon: Camera,
     color: "from-zinc-500 to-zinc-700",
   },
 ];
 
-const RUANGAN_SPESIFIK = [
-  "Lab. TK Barat I/01",
-  "Lab. TK Barat I/02",
-  "Lab. TK Barat I/04",
-  "Lab. TK Timur I/01",
-  "Lab. TK Timur I/02",
-  "Lab. TK Timur II/01",
-];
-
 interface CartItem extends Alat {
+  tipe_item: "alat" | "bahan";
   selected_tags: string[];
   qty: number;
+  nama_bahan?: string;
+  letak_id?: any;
 }
 
 export default function PengajuanPinjamAlatPage() {
   const webcamRef = useRef<Webcam>(null);
   const [loading, setLoading] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
-  const [alatList, setAlatList] = useState<Alat[]>([]);
+  const [alatList, setAlatList] = useState<any[]>([]);
   const [globalFilter, setGlobalFilter] = useState("");
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isFormStep, setIsFormStep] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
 
-  const [targetRoom, setTargetRoom] = useState("");
+  // 🌟 Gunakan ruanganLabId dan listRuangan dari API database
+  const [ruanganLabId, setRuanganLabId] = useState<string>("");
+  const [listRuangan, setListRuangan] = useState<any[]>([]);
+
+  const [kodeMatkul, setKodeMatkul] = useState("");
+  const [mataKuliah, setMataKuliah] = useState("");
+  
   const [tujuan, setTujuan] = useState("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -92,10 +92,19 @@ export default function PengajuanPinjamAlatPage() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 5;
 
-  // LOGIKA PENYARINGAN: Mengeliminasi data alat berkondisi "Rusak" secara lokal
+  // 🌟 Ambil data 6 ruangan lab dari database saat komponen dimuat
+  useEffect(() => {
+    api.get("/ruangan-labs")
+      .then((res) => {
+        setListRuangan(res.data?.data || res.data || []);
+      })
+      .catch((err) => console.error("Gagal memuat ruangan lab:", err));
+  }, []);
+
   const alatSiapPinjam = useMemo(() => {
     const list = Array.isArray(alatList) ? alatList : []; 
     return list.filter((item: any) => {
+      if (item.tipe_item === "bahan") return true;
       const kondisi = (item?.kondisi || "").toLowerCase().trim();
       return kondisi === "baik" || kondisi === "";
     });
@@ -119,10 +128,41 @@ export default function PengajuanPinjamAlatPage() {
     setSelectedGroup(name);
     try {
       setLoading(true);
-      const res = await api.get(`/alat?role=mahasiswa&lab=${name}`);
-      setAlatList(res.data || []);
+      
+      let dataAlat: any[] = [];
+      let dataBahan: any[] = [];
+
+      try {
+        const params: any = { role: "mahasiswa", lab: name };
+        if (startTime) params.waktu_mulai = startTime;
+        if (endTime) params.waktu_selesai = endTime;
+
+        const resAlat = await api.get(`/alat`, { params });
+        const rawAlat = resAlat.data;
+        dataAlat = (Array.isArray(rawAlat) ? rawAlat : (rawAlat?.data || [])).map((item: any) => ({
+          ...item,
+          tipe_item: "alat",
+        }));
+      } catch (e) {
+        console.error("Gagal ambil alat:", e);
+      }
+
+      try {
+        const resBahan = await api.get(`/bahans?lab=${name}`);
+        const rawBahan = resBahan.data;
+        dataBahan = (Array.isArray(rawBahan) ? rawBahan : (rawBahan?.data || [])).map((item: any) => ({
+          ...item,
+          tipe_item: "bahan",
+          nama_alat: item.nama_bahan,
+        }));
+      } catch (e) {
+        console.error("Gagal ambil bahan:", e);
+      }
+
+      setAlatList([...dataAlat, ...dataBahan]);
     } catch (err) {
-      console.error(err);
+      console.error("Gagal memuat katalog:", err);
+      setAlatList([]);
     } finally {
       setLoading(false);
     }
@@ -141,141 +181,152 @@ export default function PengajuanPinjamAlatPage() {
     }
   }, []);
 
-
-  const addToCart = (alat: Alat) => {
-    if (cart.find((i) => i.id === alat.id)) return;
+  const addToCart = (item: any, tipe: "alat" | "bahan" = "alat") => {
+    if (cart.find((i) => i.id === item.id && i.tipe_item === tipe)) return;
     
-    const isAsetObj = alat.is_aset === true || alat.is_aset === "1";
-    const baseTag = isAsetObj && alat.kode_tag ? alat.kode_tag.trim() : "";
-    
-    // Generasikan fallback list jika properti kode_tag_list dari API bernilai kosong
-    const finalTagList = alat.kode_tag_list && alat.kode_tag_list.length > 0 
-      ? alat.kode_tag_list 
+    const baseTag = item.kode_tag ? item.kode_tag.trim() : "";
+    const finalTagList = item.kode_tag_list && item.kode_tag_list.length > 0 
+      ? item.kode_tag_list 
       : (baseTag ? [baseTag] : []);
 
     setCart([
       ...cart, 
       { 
-        ...alat, 
+        ...item, 
+        tipe_item: tipe,
         qty: 1, 
-        // 🌟 KUNCI UTAMA: Isi opsi dropdown (kode_tag_list) & value terpilih (selected_tags)
         kode_tag_list: finalTagList, 
-        selected_tags: baseTag ? [baseTag] : [] 
+        selected_tags: finalTagList 
       }
     ]);
   };
 
   const handleCheckout = async () => {
-  const isBooking = startTime !== ""; // Pesanan jika ada waktu mulai
+    const isBooking = startTime !== "";
 
-  // 1. Validasi Langkah Form (Step 1)
-  if (!isFormStep) {
-    const assetTanpaTag = cart.find((item) => {
-      if (item.is_aset === true || item.is_aset === "1") {
-        return (
-          !item.selected_tags ||
-          item.selected_tags.length === 0 ||
-          item.selected_tags.some((tag) => !tag || tag.trim() === "")
+    if (!isFormStep) {
+      const assetTanpaTag = cart.find((item) => {
+        if (item.tipe_item === "alat" && (item.is_aset === true || item.is_aset === "1")) {
+          return (
+            !item.selected_tags ||
+            item.selected_tags.length === 0 ||
+            item.selected_tags.some((tag) => !tag || tag.trim() === "")
+          );
+        }
+        return false;
+      });
+
+      if (assetTanpaTag) {
+        return Swal.fire({
+          title: "Kode Unit Diperlukan",
+          text: `Alat "${assetTanpaTag.nama_alat}" wajib diisi unitnya.`,
+          icon: "warning",
+        });
+      }
+      setIsFormStep(true);
+      return;
+    }
+
+    if (!ruanganLabId)
+      return Swal.fire("Form Kosong", "Silakan tentukan ruangan lab tujuan.", "warning");
+    if (!kodeMatkul || !mataKuliah)
+      return Swal.fire("Form Kosong", "Silakan pilih mata kuliah.", "warning");
+    if (!tujuan.trim())
+      return Swal.fire("Form Kosong", "Tujuan penggunaan wajib diisi.", "warning");
+    if (captchaInput.toUpperCase() !== captchaString)
+      return Swal.fire("Validasi Gagal", "Kode Captcha salah.", "error");
+
+    if (!isBooking && !imageFile) {
+      return Swal.fire(
+        "Foto Diperlukan",
+        "Foto kondisi fisik alat wajib dilampirkan untuk peminjaman langsung.",
+        "warning"
+      );
+    }
+
+    if (isBooking && startTime) {
+      const selectedStart = new Date(startTime).getTime();
+      const nowTime = new Date().getTime();
+
+      if (selectedStart < nowTime) {
+        return Swal.fire(
+          "Waktu Tidak Valid",
+          "Waktu mulai pemesanan tidak boleh kurang dari waktu saat ini.",
+          "warning"
         );
       }
-      return false;
-    });
-
-    if (assetTanpaTag) {
-      return Swal.fire({
-        title: "Kode Unit Diperlukan",
-        text: `Alat "${assetTanpaTag.nama_alat}" wajib diisi unitnya.`,
-        icon: "warning",
-      });
     }
-    setIsFormStep(true);
-    return;
-  }
 
-  // 2. Validasi Form (Step 2)
-  if (!targetRoom)
-    return Swal.fire("Form Kosong", "Silakan tentukan ruangan lab tujuan.", "warning");
-  if (!tujuan.trim())
-    return Swal.fire("Form Kosong", "Tujuan penggunaan wajib diisi.", "warning");
-  if (captchaInput.toUpperCase() !== captchaString)
-    return Swal.fire("Validasi Gagal", "Kode Captcha salah.", "error");
-
-  // Logika Foto: Wajib jika peminjaman LANGSUNG
-  if (!isBooking && !imageFile) {
-    return Swal.fire(
-      "Foto Diperlukan",
-      "Foto kondisi fisik alat wajib dilampirkan untuk peminjaman langsung.",
-      "warning"
-    );
-  }
-
-  // 3. Validasi Waktu Pesanan
-  if (isBooking && startTime && endTime && new Date(startTime) >= new Date(endTime)) {
-    return Swal.fire(
-      "Waktu Tidak Valid",
-      "Jam selesai harus setelah jam mulai pemesanan.",
-      "warning"
-    );
-  }
-
-  // 4. Siapkan Data
-  const formData = new FormData();
-  formData.append("ruangan_lab", targetRoom);
-  formData.append("tujuan", tujuan);
-  formData.append("jenis_peminjaman", isBooking ? 'pesanan' : 'langsung'); // Tambahkan ini
-  
-  if (imageFile) {
-    formData.append("foto_before", imageFile);
-  }
-  
-  if (isBooking) {
-    formData.append("waktu_mulai", startTime);
-    formData.append("waktu_selesai", endTime);
-  }
-
-  const itemsPayload = cart.map((i) => ({
-    id: i.id,
-    qty: (i.is_aset === true || i.is_aset === "1") ? i.selected_tags.length : i.qty,
-    kode_tag_list: (i.is_aset === true || i.is_aset === "1") ? i.selected_tags : [],
-  }));
-
-  formData.append("items", JSON.stringify(itemsPayload));
-
-  // 5. Submit
-  try {
-    setLoading(true);
-    const response = await api.post("/peminjaman/ajukan", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-
-    if (response.status === 201 || response.status === 200) {
-      Swal.fire(
-        "Pengajuan Sukses",
-        isBooking 
-          ? "Pesanan berhasil diajukan, menunggu persetujuan koordinator."
-          : "Peminjaman langsung berhasil, alat siap digunakan.",
-        "success"
+    if (isBooking && startTime && endTime && new Date(startTime) >= new Date(endTime)) {
+      return Swal.fire(
+        "Waktu Tidak Valid",
+        "Jam selesai harus setelah jam mulai pemesanan.",
+        "warning"
       );
-      setCart([]);
-      setIsCartOpen(false);
-      window.location.reload();
     }
-  } catch (err: any) {
-    Swal.fire(
-      "Gagal",
-      err.response?.data?.message || "Terjadi kendala pada server.",
-      "error"
-    );
-  } finally {
-    setLoading(false);
-  }
-};
+
+    const formData = new FormData();
+    
+    // 🌟 Kirim ruangan_lab_id (berupa ID angka dari tabel ruangan_labs)
+    formData.append("ruangan_lab_id", ruanganLabId);
+    formData.append("kode_matkul", kodeMatkul);
+    formData.append("mata_kuliah", mataKuliah);
+    formData.append("tujuan", tujuan);
+    formData.append("jenis_peminjaman", isBooking ? 'pesanan' : 'langsung');
+    
+    if (imageFile) {
+      formData.append("foto_before", imageFile);
+    }
+    
+    if (isBooking) {
+      formData.append("waktu_mulai", startTime);
+      formData.append("waktu_selesai", endTime);
+    }
+
+    const itemsPayload = cart.map((i) => ({
+      item_id: parseInt(String(i.id), 10),
+      tipe_item: i.tipe_item || "alat",
+      qty: i.tipe_item === "bahan" ? (parseInt(String(i.qty), 10) || 1) : (i.selected_tags?.length || 1),
+      kode_tag_list: i.tipe_item === "alat" ? (i.selected_tags || []) : [],
+    }));
+
+    formData.append("items", JSON.stringify(itemsPayload));
+
+    try {
+      setLoading(true);
+      const response = await api.post("/peminjaman/ajukan", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      if (response.status === 201 || response.status === 200) {
+        Swal.fire(
+          "Pengajuan Sukses",
+          isBooking 
+            ? "Pesanan berhasil diajukan, menunggu persetujuan koordinator."
+            : "Peminjaman langsung berhasil, alat/bahan siap digunakan.",
+          "success"
+        );
+        setCart([]);
+        setIsCartOpen(false);
+        window.location.reload();
+      }
+    } catch (err: any) {
+      console.error("Error response:", err.response?.data);
+      Swal.fire(
+        "Gagal",
+        err.response?.data?.message || "Terjadi kendala pada server.",
+        "error"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const totalPages = Math.ceil(alatSiapPinjam.length / itemsPerPage) || 1;
 
-  const columns = useMemo<ColumnDef<Alat>[]>(() => {
-  return getColumns(cart, addToCart);
-}, [cart]);
+  const columns = useMemo<ColumnDef<any>[]>(() => {
+    return getColumns(cart, (item: any) => addToCart(item, item.tipe_item || "alat"));
+  }, [cart]);
 
   const table = useReactTable({
     data: alatSiapPinjam,
@@ -295,8 +346,8 @@ export default function PengajuanPinjamAlatPage() {
 
   return (
     <PageLayout
-      pageTitle="Katalog Alat Laboratorium"
-      pageDescription="Pilih kluster gedung, tentukan kode perangkat telemetri, dan isi formulir pemesanan praktikum."
+      pageTitle="Katalog Alat & Bahan Laboratorium"
+      pageDescription="Pilih kluster gedung, tentukan perangkat atau bahan praktikum, dan isi formulir pemesanan."
     >
       <div className="py-6 w-full space-y-10 selection:bg-zinc-900 selection:text-white dark:selection:bg-white dark:selection:text-zinc-900 text-left">
         {!selectedGroup ? (
@@ -317,7 +368,7 @@ export default function PengajuanPinjamAlatPage() {
               </Button>
               {selectedGroup && (
                 <Input
-                  placeholder="Cari nama alat laboratorium..."
+                  placeholder="Cari nama alat/bahan laboratorium..."
                   className="max-w-xs h-11 bg-white dark:bg-zinc-950 font-medium text-xs border border-zinc-200 dark:border-zinc-800 focus-visible:ring-zinc-900 rounded-none shadow-[2px_2px_0px_0px_rgba(9,9,11,1)] dark:shadow-none"
                   value={globalFilter}
                   onChange={(e) => setGlobalFilter(e.target.value)}
@@ -363,8 +414,10 @@ export default function PengajuanPinjamAlatPage() {
         >
           {!isFormStep ? (
             <CartItemList
-              cart={cart as any} // 🌟 CAST TO ANY UNTUK MENANGKAP STRUKTUR MULTI-INTERFACE
-              onRemove={(id) => setCart(cart.filter((c) => c.id !== id))}
+              cart={cart as any}
+              onRemove={(id: number, tipeItem: string) => 
+                setCart(cart.filter((c) => !(c.id === id && c.tipe_item === tipeItem)))
+              }
               onUpdateTags={(id, newTags) =>
                 setCart(
                   cart.map((c) =>
@@ -380,8 +433,13 @@ export default function PengajuanPinjamAlatPage() {
             />
           ) : (
             <CheckoutFormStep
-              targetRoom={targetRoom}
-              setTargetRoom={setTargetRoom}
+              // 🌟 Kirim props ruangan berbasis ID dari API database
+              targetRoom={ruanganLabId}
+              setTargetRoom={setRuanganLabId}
+              kodeMatkul={kodeMatkul}
+              setKodeMatkul={setKodeMatkul}
+              mataKuliah={mataKuliah}
+              setMataKuliah={setMataKuliah}
               tujuan={tujuan}
               setTujuan={setTujuan}
               startTime={startTime}
@@ -397,7 +455,7 @@ export default function PengajuanPinjamAlatPage() {
               captchaInput={captchaInput}
               setCaptchaInput={setCaptchaInput}
               onRefreshCaptcha={generateCaptcha}
-              rooms={RUANGAN_SPESIFIK}
+              rooms={listRuangan} // 🌟 Data ruangan kini berasal dari database (6 ID ruangan)
             />
           )}
         </CartDrawer>
